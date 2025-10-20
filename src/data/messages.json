@@ -1,0 +1,202 @@
+{
+  "conversations": [
+    {
+      "id": 1,
+      "name": "Mom",
+      "avatar": "👩",
+      "lastMessage": "Don't forget dinner tonight!",
+      "time": "2:30 PM",
+      "unread": 2,
+      "messages": [
+        {
+          "id": 1,
+          "sender": "Mom",
+          "text": "Hi honey, how was your day?",
+          "time": "2:15 PM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 2,
+          "sender": "Me",
+          "text": "It was good! Just finished a big project",
+          "time": "2:18 PM",
+          "isMe": true,
+          "status": "read"
+        },
+        {
+          "id": 3,
+          "sender": "Mom",
+          "text": "That's wonderful! I'm so proud of you",
+          "time": "2:20 PM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 4,
+          "sender": "Mom",
+          "text": "Don't forget dinner tonight! We're having your favorite",
+          "time": "2:30 PM",
+          "isMe": false,
+          "status": "delivered"
+        },
+        {
+          "id": 5,
+          "sender": "Me",
+          "text": "What time should I come over?",
+          "time": "2:32 PM",
+          "isMe": true,
+          "status": "read"
+        },
+        {
+          "id": 6,
+          "sender": "Mom",
+          "text": "Around 6 PM would be perfect",
+          "time": "2:35 PM",
+          "isMe": false,
+          "status": "sent"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "John",
+      "avatar": "👨",
+      "lastMessage": "Hey, how's the project going?",
+      "time": "1:45 PM",
+      "unread": 0,
+      "messages": [
+        {
+          "id": 1,
+          "sender": "John",
+          "text": "Hey! Are you free for a quick call?",
+          "time": "1:30 PM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 2,
+          "sender": "Me",
+          "text": "Sure, what's up?",
+          "time": "1:32 PM",
+          "isMe": true,
+          "status": "read"
+        },
+        {
+          "id": 3,
+          "sender": "John",
+          "text": "I need your opinion on the new design mockups",
+          "time": "1:35 PM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 4,
+          "sender": "Me",
+          "text": "I can take a look, send them over",
+          "time": "1:37 PM",
+          "isMe": true,
+          "status": "read"
+        },
+        {
+          "id": 5,
+          "sender": "John",
+          "text": "Perfect! I'll email them to you",
+          "time": "1:40 PM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 6,
+          "sender": "John",
+          "text": "Hey, how's the project going?",
+          "time": "1:45 PM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 7,
+          "sender": "Me",
+          "text": "Going well! Should have the first draft ready by Friday",
+          "time": "1:47 PM",
+          "isMe": true,
+          "status": "delivered"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Sarah",
+      "avatar": "👩‍💼",
+      "lastMessage": "Thanks for the help yesterday!",
+      "time": "12:20 PM",
+      "unread": 1,
+      "messages": [
+        {
+          "id": 1,
+          "sender": "Sarah",
+          "text": "Hi! Do you have a minute to help me with something?",
+          "time": "11:45 AM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 2,
+          "sender": "Me",
+          "text": "Of course! What do you need help with?",
+          "time": "11:47 AM",
+          "isMe": true,
+          "status": "read"
+        },
+        {
+          "id": 3,
+          "sender": "Sarah",
+          "text": "I'm stuck on this coding problem and can't figure out the solution",
+          "time": "11:50 AM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 4,
+          "sender": "Me",
+          "text": "Sure, I'd be happy to help! Can you share the code?",
+          "time": "11:52 AM",
+          "isMe": true,
+          "status": "read"
+        },
+        {
+          "id": 5,
+          "sender": "Sarah",
+          "text": "I'll send it over in a few minutes",
+          "time": "11:55 AM",
+          "isMe": false,
+          "status": "read"
+        },
+        {
+          "id": 6,
+          "sender": "Sarah",
+          "text": "Thanks for the help yesterday!",
+          "time": "12:20 PM",
+          "isMe": false,
+          "status": "sent"
+        },
+        {
+          "id": 7,
+          "sender": "Me",
+          "text": "You're welcome! Happy I could help",
+          "time": "12:22 PM",
+          "isMe": true,
+          "status": "read"
+        },
+        {
+          "id": 8,
+          "sender": "Sarah",
+          "text": "The solution worked perfectly! You're a lifesaver",
+          "time": "12:25 PM",
+          "isMe": false,
+          "status": "delivered"
+        }
+      ]
+    }
+  ]
+}

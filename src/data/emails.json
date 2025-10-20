@@ -1,0 +1,104 @@
+{
+  "emails": [
+    {
+      "id": 1,
+      "sender": "Apple",
+      "subject": "Your order has been shipped",
+      "preview": "Your iPhone 15 Pro Max is on its way! Track your package...",
+      "time": "2:30 PM",
+      "unread": true,
+      "starred": false,
+      "avatar": "🍎"
+    },
+    {
+      "id": 2,
+      "sender": "GitHub",
+      "subject": "Pull request merged",
+      "preview": "Your pull request #123 has been successfully merged...",
+      "time": "1:45 PM",
+      "unread": true,
+      "starred": true,
+      "avatar": "🐙"
+    },
+    {
+      "id": 3,
+      "sender": "LinkedIn",
+      "subject": "New job opportunities",
+      "preview": "Based on your profile, we found 5 new opportunities...",
+      "time": "12:20 PM",
+      "unread": false,
+      "starred": false,
+      "avatar": "💼"
+    },
+    {
+      "id": 4,
+      "sender": "Netflix",
+      "subject": "New shows added this week",
+      "preview": "Check out the latest series and movies we've added...",
+      "time": "11:30 AM",
+      "unread": false,
+      "starred": true,
+      "avatar": "🎬"
+    },
+    {
+      "id": 5,
+      "sender": "Spotify",
+      "subject": "Your weekly playlist is ready",
+      "preview": "Discover new music based on your listening habits...",
+      "time": "Yesterday",
+      "unread": false,
+      "starred": false,
+      "avatar": "🎵"
+    },
+    {
+      "id": 6,
+      "sender": "Amazon",
+      "subject": "Order confirmation",
+      "preview": "Thank you for your order! Your items will arrive...",
+      "time": "Yesterday",
+      "unread": false,
+      "starred": false,
+      "avatar": "📦"
+    },
+    {
+      "id": 7,
+      "sender": "Google",
+      "subject": "Security alert for your account",
+      "preview": "We detected unusual activity on your Google account...",
+      "time": "2 days ago",
+      "unread": true,
+      "starred": false,
+      "avatar": "🔒"
+    },
+    {
+      "id": 8,
+      "sender": "Microsoft",
+      "subject": "Office 365 subscription renewal",
+      "preview": "Your Office 365 subscription will renew automatically...",
+      "time": "3 days ago",
+      "unread": false,
+      "starred": true,
+      "avatar": "📊"
+    },
+    {
+      "id": 9,
+      "sender": "Twitter",
+      "subject": "Weekly digest",
+      "preview": "Here's what happened on Twitter this week...",
+      "time": "1 week ago",
+      "unread": false,
+      "starred": false,
+      "avatar": "🐦"
+    },
+    {
+      "id": 10,
+      "sender": "Dropbox",
+      "subject": "Storage almost full",
+      "preview": "You're using 90% of your Dropbox storage...",
+      "time": "1 week ago",
+      "unread": true,
+      "starred": false,
+      "avatar": "📁"
+    }
+  ]
+}
