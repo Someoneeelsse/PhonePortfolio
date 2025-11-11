@@ -6,26 +6,23 @@ const PhoneScreen = () => {
   const [showBattery, setShowBattery] = useState(false);
   const [showLockscreen, setShowLockscreen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragY, setDragY] = useState(0);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [batterySequenceComplete, setBatterySequenceComplete] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [lockscreenOffset, setLockscreenOffset] = useState(0);
-  const [showMainScreen, setShowMainScreen] = useState(false);
-  const [isMainScreenReady, setIsMainScreenReady] = useState(false);
+  const [_, setShowMainScreen] = useState(false);
   const dragRef = useRef<HTMLDivElement>(null);
   const startYRef = useRef(0);
   const currentYRef = useRef(0);
+  const isDraggingRef = useRef(false);
 
   useEffect(() => {
     const handleAnimationComplete = () => {
-      console.log("Animation complete - showing battery");
       setShowRedDot(true);
       setShowBattery(true);
 
       // Hide battery after animation completes (3.2s + 0.5s buffer)
       setTimeout(() => {
-        console.log("Hiding battery, marking sequence complete");
         setShowBattery(false);
         setBatterySequenceComplete(true);
 
@@ -38,7 +35,6 @@ const PhoneScreen = () => {
 
     // Listen for green battery completion from Scene.tsx
     const handleGreenBatteryComplete = () => {
-      console.log("Green battery complete from Scene - showing lockscreen");
       setShowLockscreen(true);
     };
 
@@ -58,15 +54,7 @@ const PhoneScreen = () => {
   }, []);
 
   // Debug logs for state changes
-  useEffect(() => {
-    console.log("PhoneScreen state:", {
-      showRedDot,
-      showBattery,
-      showLockscreen,
-      isUnlocked,
-      batterySequenceComplete,
-    });
-  }, [
+  useEffect(() => {}, [
     showRedDot,
     showBattery,
     showLockscreen,
@@ -85,9 +73,10 @@ const PhoneScreen = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (isUnlocked) return;
+    isDraggingRef.current = true;
     setIsDragging(true);
     startYRef.current = e.clientY;
-    setDragY(0);
+
     // Don't show main screen on click, only when actually dragging
 
     // Add global mouse move and up listeners to prevent losing track
@@ -95,34 +84,8 @@ const PhoneScreen = () => {
     document.addEventListener("mouseup", handleGlobalMouseUp);
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || isUnlocked) return;
-    const deltaY = e.clientY - startYRef.current;
-    const maxDrag = 400; // Increased to allow full height movement
-    const clampedDelta = Math.max(-maxDrag, Math.min(0, deltaY));
-    setDragY(clampedDelta);
-
-    // Show main screen when user actually starts dragging
-    if (Math.abs(deltaY) > 10) {
-      setShowMainScreen(true);
-    }
-
-    // Update lockscreen offset (negative because we want to slide up)
-    const lockscreenDelta = Math.max(-321.5, Math.min(0, deltaY * 0.3)); // Reduced sensitivity for smoother control
-    setLockscreenOffset(lockscreenDelta);
-
-    // Console log for debugging
-    console.log("Slider Position Debug:", {
-      deltaY: deltaY,
-      clampedDelta: clampedDelta,
-      lockscreenDelta: lockscreenDelta,
-      currentDragY: dragY,
-      currentLockscreenOffset: lockscreenOffset,
-    });
-  };
-
   const handleGlobalMouseMove = (e: MouseEvent) => {
-    if (!isDragging || isUnlocked) return;
+    if (!isDraggingRef.current || isUnlocked) return;
 
     // Store current Y position
     currentYRef.current = e.clientY;
@@ -144,25 +107,16 @@ const PhoneScreen = () => {
     setLockscreenOffset(lockscreenOffset);
 
     // Update dragY for unlock logic
-    setDragY(lockscreenOffset);
 
     // Show main screen only when lockscreen is significantly moved up
     if (lockscreenOffset > 50) {
       setShowMainScreen(true);
     }
-
-    // Console log for debugging
-    console.log("Delta-based Movement:", {
-      mouseY: e.clientY,
-      startY: startYRef.current,
-      deltaY: deltaY,
-      lockscreenOffset: lockscreenOffset,
-      sliderY: e.clientY, // Current Y position of the slider
-    });
   };
 
   const handleGlobalMouseUp = () => {
-    if (!isDragging || isUnlocked) return;
+    if (!isDraggingRef.current || isUnlocked) return;
+    isDraggingRef.current = false;
     setIsDragging(false);
 
     // Remove global listeners
@@ -172,53 +126,24 @@ const PhoneScreen = () => {
     // Check if slider reached Y = 350 threshold
     if (currentYRef.current < 350 || lockscreenOffset >= 200) {
       // Snap upwards (unlock) when slider is above Y = 350
-      console.log(
-        "Unlocking - Y position:",
-        currentYRef.current,
-        "Lockscreen offset:",
-        lockscreenOffset,
-        "Condition met:",
-        currentYRef.current < 350 || lockscreenOffset >= 200
-      );
+
       setIsUnlocked(true);
       setLockscreenOffset(1321.5 + 50); // Slide completely off screen
       window.dispatchEvent(new CustomEvent("phoneUnlocked"));
     } else {
       // Snap back to original position (locked)
-      console.log(
-        "Locking - Y position:",
-        currentYRef.current,
-        "Resetting lockscreenOffset to 0"
-      );
-      setDragY(0);
+      isDraggingRef.current = false;
       setLockscreenOffset(0);
       setShowMainScreen(false); // Hide main screen when locked
     }
   };
 
-  const handleMouseUp = () => {
-    if (!isDragging || isUnlocked) return;
-    setIsDragging(false);
-
-    // If dragged up enough, unlock (reduced threshold)
-    if (lockscreenOffset >= 150) {
-      setIsUnlocked(true);
-      // Animate lockscreen completely off screen
-      setLockscreenOffset(-321.5);
-      // Dispatch unlock event
-      window.dispatchEvent(new CustomEvent("phoneUnlocked"));
-    } else {
-      // Snap back to original position
-      setDragY(0);
-      setLockscreenOffset(0);
-    }
-  };
-
   const handleTouchStart = (e: React.TouchEvent) => {
     if (isUnlocked) return;
+    isDraggingRef.current = true;
     setIsDragging(true);
     startYRef.current = e.touches[0].clientY;
-    setDragY(0);
+
     // Don't show main screen on touch, only when actually dragging
 
     // Add global touch listeners for mobile
@@ -228,34 +153,8 @@ const PhoneScreen = () => {
     document.addEventListener("touchend", handleGlobalTouchEnd);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || isUnlocked) return;
-    const deltaY = e.touches[0].clientY - startYRef.current;
-    const maxDrag = 700; // Increased to allow full height movement
-    const clampedDelta = Math.max(-maxDrag, Math.min(0, deltaY));
-    setDragY(clampedDelta);
-
-    // Show main screen when user actually starts dragging
-    if (Math.abs(deltaY) > 10) {
-      setShowMainScreen(true);
-    }
-
-    // Update lockscreen offset (negative because we want to slide up)
-    const lockscreenDelta = Math.max(-321.5, Math.min(0, deltaY * 0.2)); // Reduced sensitivity for smoother control
-    setLockscreenOffset(lockscreenDelta);
-
-    // Console log for debugging
-    console.log("Touch Slider Position Debug:", {
-      deltaY: deltaY,
-      clampedDelta: clampedDelta,
-      lockscreenDelta: lockscreenDelta,
-      currentDragY: dragY,
-      currentLockscreenOffset: lockscreenOffset,
-    });
-  };
-
   const handleGlobalTouchMove = (e: TouchEvent) => {
-    if (!isDragging || isUnlocked) return;
+    if (!isDraggingRef.current || isUnlocked) return;
     e.preventDefault(); // Prevent scrolling
 
     // Store current Y position
@@ -278,7 +177,6 @@ const PhoneScreen = () => {
     setLockscreenOffset(lockscreenOffset);
 
     // Update dragY for unlock logic
-    setDragY(lockscreenOffset);
 
     // Show main screen only when lockscreen is significantly moved up
     if (lockscreenOffset > 50) {
@@ -293,19 +191,11 @@ const PhoneScreen = () => {
       // Dispatch unlock event
       window.dispatchEvent(new CustomEvent("phoneUnlocked"));
     }
-
-    // Console log for debugging
-    console.log("Delta-based Touch Movement:", {
-      touchY: e.touches[0].clientY,
-      startY: startYRef.current,
-      deltaY: deltaY,
-      lockscreenOffset: lockscreenOffset,
-      sliderY: e.touches[0].clientY, // Current Y position of the slider
-    });
   };
 
   const handleGlobalTouchEnd = () => {
-    if (!isDragging || isUnlocked) return;
+    if (!isDraggingRef.current || isUnlocked) return;
+    isDraggingRef.current = false;
     setIsDragging(false);
 
     // Remove global listeners
@@ -315,42 +205,15 @@ const PhoneScreen = () => {
     // Check if slider reached Y = 350 threshold
     if (currentYRef.current < 350 || lockscreenOffset >= 200) {
       // Snap upwards (unlock) when slider is above Y = 350
-      console.log(
-        "Unlocking - Y position:",
-        currentYRef.current,
-        "Lockscreen offset:",
-        lockscreenOffset,
-        "Condition met:",
-        currentYRef.current < 350 || lockscreenOffset >= 200
-      );
+
       setIsUnlocked(true);
       setLockscreenOffset(321.5 + 50); // Slide completely off screen
       window.dispatchEvent(new CustomEvent("phoneUnlocked"));
     } else {
       // Snap back to original position (locked)
-      console.log(
-        "Locking - Y position:",
-        currentYRef.current,
-        "Resetting lockscreenOffset to 0"
-      );
-      setDragY(0);
+      isDraggingRef.current = false;
       setLockscreenOffset(0);
       setShowMainScreen(false); // Hide main screen when locked
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (!isDragging || isUnlocked) return;
-    setIsDragging(false);
-
-    if (lockscreenOffset >= 150) {
-      setIsUnlocked(true);
-      // Smooth animation to slide lockscreen completely off screen
-      setLockscreenOffset(321.5 + 50); // Slide completely off screen
-      window.dispatchEvent(new CustomEvent("phoneUnlocked"));
-    } else {
-      setDragY(0);
-      setLockscreenOffset(0);
     }
   };
 
@@ -364,6 +227,8 @@ const PhoneScreen = () => {
         backgroundRepeat: "no-repeat",
         clipPath:
           "polygon(0% 0%, 22% 0%, 22.7% 3px, 23.5% 31px, 23.7% 33px, 24.2% 37px, 24.9% 41px, 25.8% 43.2px, 26.2% 44px,    72.8% 44px,  73.2% 43.2px,  74.1% 41px,  74.8% 37px, 75.3% 33px,  75.5% 31px, 76.3% 3px, 77% 0%, 100% 0%, 100% 100%, 0% 100%  )",
+        // Ensure PhoneScreen is always visible on top
+        zIndex: 1000,
       }}
     >
       {/* Background layer that can fade independently */}
@@ -377,6 +242,8 @@ const PhoneScreen = () => {
           opacity: showLockscreen ? 0 : 1,
           transition: "opacity 1.2s ease-out",
           zIndex: 1,
+          // Ensure background is always visible from the start
+          pointerEvents: "auto",
         }}
       />
 
@@ -406,7 +273,7 @@ const PhoneScreen = () => {
       )}
 
       {/* Main Phone Screen - Only show when lockscreen is visible and user is dragging */}
-      {showLockscreen && (
+      {showLockscreen && lockscreenOffset > 50 && (
         <div
           className="absolute inset-0 w-full h-full"
           style={{

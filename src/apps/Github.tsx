@@ -44,14 +44,29 @@ const Github = ({
     return (
       <AppsLayout onClose={onClose} title="GitHub">
         <div className="h-full flex flex-col bg-white pt-30">
-          {/* GitHub iframe */}
-          <div className="flex-1 w-full h-full">
-            <iframe
-              src="https://github.com/Someoneeelsse"
-              className="w-full h-full border-0"
-              title="GitHub"
-              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-            />
+          {/* GitHub content - opens in new window due to X-Frame-Options */}
+          <div className="flex-1 w-full h-full flex flex-col items-center justify-center px-6">
+            <div className="text-center space-y-6">
+              <FaGithub className="text-gray-800 text-8xl mx-auto" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                GitHub Profile
+              </h2>
+              <p className="text-lg text-gray-600 mb-6">
+                GitHub blocks iframe embedding for security reasons.
+              </p>
+              <button
+                onClick={() => {
+                  window.open(
+                    "https://github.com/Someoneeelsse",
+                    "_blank",
+                    "noopener,noreferrer"
+                  );
+                }}
+                className="px-8 py-4 bg-gray-900 text-white text-xl font-semibold rounded-2xl hover:bg-gray-800 transition-colors duration-200 shadow-lg hover:shadow-xl"
+              >
+                Open GitHub Profile
+              </button>
+            </div>
           </div>
         </div>
       </AppsLayout>

@@ -35,11 +35,9 @@ const Subtitles: React.FC<SubtitlesProps> = ({
   useEffect(() => {
     if (isVisible && !hasAppeared) {
       setHasAppeared(true);
-      console.log("Component appeared, starting animation");
 
       // Split text into characters array
       const characters = text.split("");
-      console.log("Characters to type:", characters);
 
       // Start GSAP typing animation
       if (textRef.current) {
@@ -119,8 +117,6 @@ const Subtitles: React.FC<SubtitlesProps> = ({
         });
 
         // No blinking cursor needed - terminal blocks serve as typing indicator
-
-        console.log("GSAP animation started");
 
         // Call completion callback when animation finishes
         if (onAnimationComplete) {
@@ -207,12 +203,9 @@ const Subtitles: React.FC<SubtitlesProps> = ({
   };
 
   const handleNextClick = (feedback: boolean) => {
-    console.log("Subtitles handleNextClick called with:", feedback);
     if (onNextClick) {
-      console.log("Calling onNextClick callback");
       onNextClick(feedback);
     } else {
-      console.log("onNextClick callback is not defined");
     }
   };
 

@@ -137,6 +137,7 @@ export default function LoadingScreen({
 
   return (
     <div
+      className="loading-screen-container"
       style={{
         position: "fixed",
         top: 0,
@@ -147,7 +148,11 @@ export default function LoadingScreen({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 9999,
+        zIndex: 1,
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        MozUserSelect: "none",
+        msUserSelect: "none",
       }}
     >
       <style>
@@ -162,9 +167,23 @@ export default function LoadingScreen({
               transform: translateX(-50%) translateY(0) rotate(180deg);
             }
           }
+          
+          /* Prevent text selection on loading screen */
+          .loading-screen-container * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+          }
         `}
       </style>
-      <div style={{ textAlign: "center", position: "relative" }}>
+      <div
+        style={{
+          textAlign: "center",
+          position: "relative",
+          userSelect: "none",
+        }}
+      >
         <div
           style={{
             color: "white",
@@ -173,6 +192,10 @@ export default function LoadingScreen({
             marginBottom: "10px",
             opacity: showName ? 0 : 1,
             transition: "opacity 1s ease-out",
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
           }}
         >
           Loading...
@@ -213,6 +236,10 @@ export default function LoadingScreen({
               marginTop: "20px",
               opacity: 1,
               animation: "fadeIn 1s ease-in",
+              userSelect: "none",
+              WebkitUserSelect: "none",
+              MozUserSelect: "none",
+              msUserSelect: "none",
             }}
           >
             Someoneelsse

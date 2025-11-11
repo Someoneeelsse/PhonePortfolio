@@ -7,9 +7,15 @@ interface AppsLayoutProps {
   children: React.ReactNode;
   onClose: () => void;
   title: string;
+  textColor?: string;
 }
 
-const AppsLayout = ({ children, onClose, title }: AppsLayoutProps) => {
+const AppsLayout = ({
+  children,
+  onClose,
+  title,
+  textColor = "text-gray-700",
+}: AppsLayoutProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update time every second
@@ -52,17 +58,14 @@ const AppsLayout = ({ children, onClose, title }: AppsLayoutProps) => {
             {/* Battery tip */}
             <div className="absolute right-[-3px] top-[8px] w-[3px] h-[10px] bg-white rounded-r-sm border-black border-1"></div>
           </div>
-
-          {/* Small glowing pulse effect (optional, gives charge “energy”) */}
-          <div className="absolute w-10 h-6 rounded-md bg-green-200/30 animate-pulse"></div>
         </div>
       </div>
 
       {/* Title Overlay */}
-      <div className="absolute top-15 left-0 right-0 z-50 px-4 py-2 flex items-center">
+      <div className="absolute top-15 left-0 right-0 z-50 px-4 py-2 flex items-center pointer-events-none">
         <button
           onClick={onClose}
-          className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
+          className={`flex items-center space-x-2 ${textColor} transition-colors pointer-events-auto`}
         >
           <FaArrowLeft className="text-3xl" />
           <span className="text-3xl font-medium">{title}</span>

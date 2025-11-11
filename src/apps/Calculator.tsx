@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaCalculator } from "react-icons/fa";
+import { FaBackspace } from "react-icons/fa";
 import AppsLayout from "./AppsLayout";
 
 const Calculator = ({
@@ -16,7 +17,7 @@ const Calculator = ({
   const [operation, setOperation] = useState<string | null>(null);
   const [waitingForOperand, setWaitingForOperand] = useState(false);
   const [equation, setEquation] = useState("");
-  const [equationHistory, setEquationHistory] = useState<string[]>([]);
+  const [_, setEquationHistory] = useState<string[]>([]);
 
   useEffect(() => {
     // Show loading screen for 1.5 seconds
@@ -182,47 +183,55 @@ const Calculator = ({
   if (showContent) {
     return (
       <AppsLayout onClose={onClose} title="Calculator">
-        <div className="h-full flex flex-col bg-black pt-30">
+        <div className="h-full flex flex-col bg-gradient-to-b from-gray-900 to-black pt-30">
           {/* Calculator Display */}
-          <div className="flex-1 flex flex-col justify-end p-4">
+          <div className="flex-1 flex flex-col justify-end px-4 pb-6">
             {/* Display */}
-            <div className="text-right mb-4">
+            <div className="text-right mb-6 min-h-[120px] flex flex-col justify-end">
               {/* Equation Display */}
-              {equationHistory.length > 0 && (
-                <div className="text-gray-400 text-2xl font-light mb-2 overflow-hidden">
-                  {equationHistory.join(" ")}
+              {equation && equation !== display && (
+                <div className="text-gray-400 text-xl font-light mb-2 overflow-hidden text-ellipsis">
+                  {equation}
                 </div>
               )}
               {/* Main Display */}
-              <div className="text-white text-8xl font-light overflow-hidden">
-                {display}
+              <div className="text-white text-6xl font-light overflow-hidden text-ellipsis leading-tight">
+                {display.length > 9 ? (
+                  <span className="text-5xl">{display}</span>
+                ) : (
+                  display
+                )}
               </div>
             </div>
 
             {/* Calculator Buttons */}
-            <div className="grid grid-cols-4 gap-3 h-[70%]">
+            <div className="grid grid-cols-4 gap-3 pb-2">
               {/* Row 1 */}
               <button
-                onClick={handleRemove}
-                className="bg-gray-500 hover:bg-gray-400 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                onClick={clear}
+                className="bg-gray-600 hover:bg-gray-500 active:bg-gray-400 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
-                Remove
+                {display === "0" && !previousValue ? "AC" : "C"}
               </button>
               <button
-                onClick={clear}
-                className="bg-gray-500 hover:bg-gray-400 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                onClick={handleRemove}
+                className="bg-gray-600 hover:bg-gray-500 active:bg-gray-400 text-white text-xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
-                AC
+                <FaBackspace />
               </button>
               <button
                 onClick={handlePercentage}
-                className="bg-gray-500 hover:bg-gray-400 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-600 hover:bg-gray-500 active:bg-gray-400 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 %
               </button>
               <button
                 onClick={() => performOperation("÷")}
-                className="bg-orange-500 hover:bg-orange-400 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className={`${
+                  operation === "÷"
+                    ? "bg-white text-orange-500"
+                    : "bg-orange-500 hover:bg-orange-400 active:bg-orange-300 text-white"
+                } text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95`}
               >
                 ÷
               </button>
@@ -230,25 +239,29 @@ const Calculator = ({
               {/* Row 2 */}
               <button
                 onClick={() => inputNumber("7")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 7
               </button>
               <button
                 onClick={() => inputNumber("8")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 8
               </button>
               <button
                 onClick={() => inputNumber("9")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 9
               </button>
               <button
                 onClick={() => performOperation("×")}
-                className="bg-orange-500 hover:bg-orange-400 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className={`${
+                  operation === "×"
+                    ? "bg-white text-orange-500"
+                    : "bg-orange-500 hover:bg-orange-400 active:bg-orange-300 text-white"
+                } text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95`}
               >
                 ×
               </button>
@@ -256,51 +269,59 @@ const Calculator = ({
               {/* Row 3 */}
               <button
                 onClick={() => inputNumber("4")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 4
               </button>
               <button
                 onClick={() => inputNumber("5")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 5
               </button>
               <button
                 onClick={() => inputNumber("6")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 6
               </button>
               <button
                 onClick={() => performOperation("-")}
-                className="bg-orange-500 hover:bg-orange-400 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className={`${
+                  operation === "-"
+                    ? "bg-white text-orange-500"
+                    : "bg-orange-500 hover:bg-orange-400 active:bg-orange-300 text-white"
+                } text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95`}
               >
-                -
+                −
               </button>
 
               {/* Row 4 */}
               <button
                 onClick={() => inputNumber("1")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 1
               </button>
               <button
                 onClick={() => inputNumber("2")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 2
               </button>
               <button
                 onClick={() => inputNumber("3")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 3
               </button>
               <button
                 onClick={() => performOperation("+")}
-                className="bg-orange-500 hover:bg-orange-400 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className={`${
+                  operation === "+"
+                    ? "bg-white text-orange-500"
+                    : "bg-orange-500 hover:bg-orange-400 active:bg-orange-300 text-white"
+                } text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95`}
               >
                 +
               </button>
@@ -308,19 +329,19 @@ const Calculator = ({
               {/* Row 5 */}
               <button
                 onClick={() => inputNumber("0")}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full h-10/11 rounded-full transition-colors flex items-center justify-center col-span-2"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-start pl-6 col-span-2 shadow-lg active:scale-95"
               >
                 0
               </button>
               <button
                 onClick={inputDecimal}
-                className="bg-gray-700 hover:bg-gray-600 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-gray-800 hover:bg-gray-700 active:bg-gray-600 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 .
               </button>
               <button
                 onClick={handleEquals}
-                className="bg-orange-500 hover:bg-orange-400 text-white text-6xl font-medium w-full aspect-square rounded-full transition-colors flex items-center justify-center"
+                className="bg-orange-500 hover:bg-orange-400 active:bg-orange-300 text-white text-2xl font-medium w-full h-16 rounded-2xl transition-all duration-150 flex items-center justify-center shadow-lg active:scale-95"
               >
                 =
               </button>

@@ -6,12 +6,13 @@ import { RoundedBox } from "@react-three/drei";
 export default function IPhoneCharger() {
   const band = useRef<THREE.Mesh>(null);
   const box = useRef<THREE.Mesh>(null);
-  const { width, height } = useThree((s) => s.size);
+  const { width: _, height: __ } = useThree((s) => s.size);
 
   const [hovered, setHovered] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [lastMousePos, setLastMousePos] = useState<THREE.Vector2 | null>(null);
   const [hasDispatchedReset, setHasDispatchedReset] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
 
   // Rope curve points
   const [curve] = useState(
@@ -45,8 +46,8 @@ export default function IPhoneCharger() {
 
     // Check if box has reached the lock position and reset camera (only once)
     if (box.current.position.y >= 3.32 && !hasDispatchedReset) {
-      console.log("Charger reached lock position - dispatching reset event");
       setHasDispatchedReset(true);
+      setIsLocked(true);
       // Dispatch event to reset camera to initial position
       window.dispatchEvent(new CustomEvent("resetCameraPosition"));
     }
@@ -85,7 +86,7 @@ export default function IPhoneCharger() {
 
       // Constrain Y-axis based on X position (valley effect)
       const currentX = box.current.position.x;
-      if (currentX >= -0.12 && currentX <= 0.16) {
+      if (currentX >= -0.09 && currentX <= -0.03) {
         // Center range: limit Y to 3.5
         box.current.position.y = Math.min(3.32, box.current.position.y);
       } else {
@@ -93,29 +94,8 @@ export default function IPhoneCharger() {
         box.current.position.y = Math.min(3.2, box.current.position.y);
       }
 
-      // Log current position of the box
-      console.log("Current box position:", {
-        x: box.current.position.x,
-        y: box.current.position.y,
-        z: box.current.position.z,
-      });
-
       // Update last mouse position
       setLastMousePos(currentMouse);
-
-      console.log("Box following cursor:", {
-        mouseDelta: { x: delta.x, y: delta.y },
-        distance: distance,
-        adaptiveSpeed: adaptiveSpeed,
-        xMultiplier: adaptiveSpeed * 1.5,
-        yMultiplier: adaptiveSpeed,
-        worldDelta: { x: worldDelta.x, y: worldDelta.y, z: worldDelta.z },
-        box: {
-          x: box.current.position.x,
-          y: box.current.position.y,
-          z: box.current.position.z,
-        },
-      });
     }
 
     // Rope curve from bottom to box
@@ -168,7 +148,7 @@ export default function IPhoneCharger() {
             receiveShadow
           >
             <meshStandardMaterial
-              color={hovered ? "#ff6b6b" : "white"}
+              color={hovered && !isLocked ? "#ff6b6b" : "white"}
               metalness={0.1}
               roughness={0.3}
             />
@@ -182,7 +162,7 @@ export default function IPhoneCharger() {
             receiveShadow
           >
             <meshStandardMaterial
-              color={hovered ? "#ff6b6b" : "white"}
+              color={hovered && !isLocked ? "#ff6b6b" : "white"}
               metalness={0.1}
               roughness={0.3}
             />
@@ -198,7 +178,7 @@ export default function IPhoneCharger() {
             receiveShadow
           >
             <meshStandardMaterial
-              color={hovered ? "#ff6b6b" : "#f0f0f0"}
+              color={hovered && !isLocked ? "#ff6b6b" : "#f0f0f0"}
               metalness={0.1}
               roughness={0.3}
             />

@@ -1,0 +1,293 @@
+import { useEffect, useState } from "react";
+import { FaPlus, FaTrash, FaChevronRight } from "react-icons/fa";
+import { MdNotes } from "react-icons/md";
+import AppsLayout from "./AppsLayout";
+
+interface Note {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const Notes = ({
+  onClose,
+  clickPosition,
+}: {
+  onClose: () => void;
+  clickPosition: { x: number; y: number };
+}) => {
+  const [showLoading, setShowLoading] = useState(true);
+  const [showContent, setShowContent] = useState(false);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [noteTitle, setNoteTitle] = useState("");
+  const [noteContent, setNoteContent] = useState("");
+
+  // Load notes from localStorage on mount
+  useEffect(() => {
+    if (showContent) {
+      const savedNotes = localStorage.getItem("notes");
+      if (savedNotes) {
+        try {
+          const parsedNotes = JSON.parse(savedNotes);
+          // Convert date strings back to Date objects
+          const notesWithDates = parsedNotes.map((note: any) => ({
+            ...note,
+            createdAt: new Date(note.createdAt),
+            updatedAt: new Date(note.updatedAt),
+          }));
+          setNotes(notesWithDates);
+        } catch (error) {
+          console.error("Error loading notes from localStorage:", error);
+          // Initialize with sample note if error
+          const sampleNotes: Note[] = [
+            {
+              id: "1",
+              title: "Welcome to Notes",
+              content: "",
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          ];
+          setNotes(sampleNotes);
+        }
+      } else {
+        // Don't initialize with sample note - start with empty array
+        // User can create their own notes
+        setNotes([]);
+      }
+    }
+  }, [showContent]);
+
+  // Save notes to localStorage whenever notes change
+  useEffect(() => {
+    if (showContent) {
+      try {
+        // Save notes array (even if empty) to localStorage
+        localStorage.setItem("notes", JSON.stringify(notes));
+      } catch (error) {
+        console.error("Error saving notes to localStorage:", error);
+      }
+    }
+  }, [notes, showContent]);
+
+  useEffect(() => {
+    // Show loading screen for 1.5 seconds
+    const timer = setTimeout(() => {
+      setShowLoading(false);
+      setShowContent(true);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleCreateNote = () => {
+    const newNote: Note = {
+      id: Date.now().toString(),
+      title: "New Note",
+      content: "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    setNotes([newNote, ...notes]);
+    setSelectedNote(newNote);
+    setNoteTitle(newNote.title);
+    setNoteContent(newNote.content);
+  };
+
+  const handleSelectNote = (note: Note) => {
+    setSelectedNote(note);
+    setNoteTitle(note.title);
+    setNoteContent(note.content);
+  };
+
+  const handleSaveNote = () => {
+    if (!selectedNote) return;
+
+    const updatedNote: Note = {
+      ...selectedNote,
+      title: noteTitle.trim() || "New Note",
+      content: noteContent,
+      updatedAt: new Date(),
+    };
+
+    setNotes(
+      notes.map((note) => (note.id === selectedNote.id ? updatedNote : note))
+    );
+    setSelectedNote(updatedNote);
+  };
+
+  if (showLoading) {
+    return (
+      <div className="w-151 h-321.5 rounded-[71px] relative flex items-center justify-center overflow-hidden bg-yellow-400">
+        <div
+          className="flex flex-col items-center space-y-4"
+          style={{
+            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            animation:
+              "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+          }}
+        >
+          <MdNotes className="text-white text-6xl" />
+          <div className="text-white text-2xl font-semibold">Notes</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showContent) {
+    // Show note editor if a note is selected
+    if (selectedNote) {
+      return (
+        <AppsLayout onClose={onClose} title="Notes" textColor="text-gray-200">
+          <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
+            {/* Note Editor */}
+            <div className="flex-1 flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 overflow-hidden relative z-10">
+              {/* Title Input */}
+              <div className="px-4 py-3 bg-white/80 backdrop-blur-sm border-b border-gray-200 flex-shrink-0 relative z-10">
+                <input
+                  type="text"
+                  value={noteTitle}
+                  onChange={(e) => setNoteTitle(e.target.value)}
+                  onBlur={handleSaveNote}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.currentTarget.focus();
+                  }}
+                  placeholder="Title"
+                  className="w-full text-xl font-semibold outline-none bg-transparent text-gray-900 pointer-events-auto select-text"
+                  autoFocus
+                  style={{
+                    pointerEvents: "auto",
+                    zIndex: 10,
+                    userSelect: "text",
+                    WebkitUserSelect: "text",
+                  }}
+                />
+              </div>
+
+              {/* Content Textarea */}
+              <div className="flex-1 px-4 py-4 flex flex-col min-h-0 relative z-10 bg-white/50">
+                <textarea
+                  value={noteContent}
+                  onChange={(e) => {
+                    setNoteContent(e.target.value);
+                  }}
+                  onBlur={handleSaveNote}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.currentTarget.focus();
+                  }}
+                  placeholder="Start writing..."
+                  className="flex-1 w-full text-base outline-none resize-none bg-transparent text-gray-900 leading-relaxed pointer-events-auto select-text"
+                  style={{
+                    fontFamily: "system-ui, -apple-system, sans-serif",
+                    pointerEvents: "auto",
+                    zIndex: 10,
+                    userSelect: "text",
+                    WebkitUserSelect: "text",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </AppsLayout>
+      );
+    }
+
+    // Show notes list
+    return (
+      <AppsLayout onClose={onClose} title="Notes">
+        <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
+          {/* Notes List */}
+          <div className="flex-1 overflow-y-auto">
+            {notes.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                <MdNotes className="text-6xl mb-4 opacity-30" />
+                <p className="text-lg">No notes</p>
+              </div>
+            ) : (
+              <div>
+                {notes.map((note) => {
+                  const preview = note.content.split("\n")[0].substring(0, 60);
+                  const date = note.updatedAt.toLocaleDateString([], {
+                    month: "short",
+                    day: "numeric",
+                    year:
+                      note.updatedAt.getFullYear() !== new Date().getFullYear()
+                        ? "numeric"
+                        : undefined,
+                  });
+                  const isSelected =
+                    (selectedNote as Note | null)?.id === note.id;
+
+                  return (
+                    <div
+                      key={note.id}
+                      className="px-4 py-3 border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div
+                          className="flex-1 min-w-0 cursor-pointer"
+                          onClick={() => handleSelectNote(note)}
+                        >
+                          <h3 className="font-semibold text-gray-900 truncate text-base mb-1">
+                            {note.title || "New Note"}
+                          </h3>
+                          {preview && (
+                            <p className="text-sm text-gray-600 truncate mb-1">
+                              {preview}
+                              {note.content.length > 60 ? "..." : ""}
+                            </p>
+                          )}
+                          <span className="text-xs text-gray-500">{date}</span>
+                        </div>
+                        <div className="flex flex-col items-center gap-2 ml-2 flex-shrink-0">
+                          <FaChevronRight className="text-gray-400 text-sm mt-1" />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // If this note is currently selected, clear selection
+                              if (isSelected) {
+                                setSelectedNote(null);
+                                setNoteTitle("");
+                                setNoteContent("");
+                              }
+                              // Remove the note from the list
+                              setNotes(notes.filter((n) => n.id !== note.id));
+                            }}
+                            className="text-red-500 hover:text-red-600 transition-colors"
+                          >
+                            <FaTrash className="text-sm" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Floating Action Button */}
+          <button
+            onClick={handleCreateNote}
+            className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:from-yellow-600 hover:to-yellow-700 hover:shadow-3xl transition-all duration-300 z-50 transform hover:scale-110 active:scale-105"
+            style={{
+              boxShadow:
+                "0 10px 40px rgba(234, 179, 8, 0.4), 0 0 20px rgba(234, 179, 8, 0.2)",
+            }}
+          >
+            <FaPlus className="text-2xl font-bold" />
+          </button>
+        </div>
+      </AppsLayout>
+    );
+  }
+
+  return null;
+};
+
+export default Notes;

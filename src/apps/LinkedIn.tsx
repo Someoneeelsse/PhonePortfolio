@@ -44,14 +44,29 @@ const LinkedIn = ({
     return (
       <AppsLayout onClose={onClose} title="LinkedIn">
         <div className="h-full flex flex-col bg-white pt-30">
-          {/* LinkedIn iframe */}
-          <div className="flex-1 w-full h-full">
-            <iframe
-              src="https://linkedin.com"
-              className="w-full h-full border-0"
-              title="LinkedIn"
-              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-            />
+          {/* LinkedIn content - opens in new window due to X-Frame-Options */}
+          <div className="flex-1 w-full h-full flex flex-col items-center justify-center px-6">
+            <div className="text-center space-y-6">
+              <FaLinkedin className="text-blue-600 text-8xl mx-auto" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                LinkedIn Profile
+              </h2>
+              <p className="text-lg text-gray-600 mb-6">
+                LinkedIn blocks iframe embedding for security reasons.
+              </p>
+              <button
+                onClick={() => {
+                  window.open(
+                    "https://linkedin.com",
+                    "_blank",
+                    "noopener,noreferrer"
+                  );
+                }}
+                className="px-8 py-4 bg-blue-600 text-white text-xl font-semibold rounded-2xl hover:bg-blue-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
+              >
+                Open LinkedIn
+              </button>
+            </div>
           </div>
         </div>
       </AppsLayout>
