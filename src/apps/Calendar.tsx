@@ -211,7 +211,7 @@ const Calendar = ({
       : [];
 
     return (
-      <AppsLayout onClose={onClose} title="Calendar">
+      <AppsLayout onClose={onClose} title="Calendar" statusBarTextColor="text-black" batteryColorScheme="light">
         <div className="h-full flex flex-col bg-white pt-30">
           {/* Header with Month Navigation */}
           <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaStar, FaPlus, FaPaperPlane, FaTimes } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
 import { IoIosMore } from "react-icons/io";
+import { IoMailOpenOutline } from "react-icons/io5";
+
 import AppsLayout from "./AppsLayout";
 import emailsData from "../data/emails.json";
 // Uncomment when you install @emailjs/browser:
@@ -67,14 +68,14 @@ const Email = ({
     return (
       <div className="w-151 h-321.5 rounded-[71px] relative flex items-center justify-center overflow-hidden bg-blue-500">
         <div
-          className="flex flex-col items-center space-y-4"
+          className="flex flex-col items-center space-y-4 animate-fadeInFromCenter"
           style={{
-            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            transformOrigin: "50% 100%",
             animation:
-              "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+              "appOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
           }}
         >
-          <MdEmail className="text-white text-6xl" />
+          <IoMailOpenOutline className="text-white text-6xl" />
           <div className="text-white text-2xl font-semibold">Mail</div>
         </div>
       </div>
@@ -85,7 +86,12 @@ const Email = ({
     // Show compose view if enabled
     if (showCompose) {
       return (
-        <AppsLayout onClose={onClose} title="New Message">
+        <AppsLayout
+          onClose={onClose}
+          title="New Message"
+          statusBarTextColor="text-black"
+          batteryColorScheme="light"
+        >
           <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
             {/* Compose Header */}
             <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between bg-white/80 backdrop-blur-sm">
@@ -226,7 +232,12 @@ const Email = ({
     }
 
     return (
-      <AppsLayout onClose={onClose} title="Mail">
+      <AppsLayout
+        onClose={onClose}
+        title="Mail"
+        statusBarTextColor="text-black"
+        batteryColorScheme="light"
+      >
         <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
           {/* Emails List */}
           <div className="flex-1 overflow-y-auto">

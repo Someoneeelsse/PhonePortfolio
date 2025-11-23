@@ -2,12 +2,13 @@ import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { useEffect, useState, useRef, useMemo, useCallback, memo } from "react";
 import { gsap } from "gsap";
 import * as THREE from "three";
+import { Html } from "@react-three/drei";
 import LoadingScreen from "./components/LoadingScreen";
 import Phone from "./models/Phone";
 import Subtitles from "./components/Subtitles";
 import { LuArrowBigLeftDash } from "react-icons/lu";
 import Charger from "./models/Charger";
-
+import { OrbitControls } from "@react-three/drei";
 import ProjectsCard from "./components/ProjectsCard";
 import fireworksVertexShader from "/shaders/fireworks/vertex.glsl?raw";
 import fireworksFragmentShader from "/shaders/fireworks/fragment.glsl?raw";
@@ -911,6 +912,43 @@ export default function Scene({
 
         {/* Show Charger when loading animation is complete */}
         {isLoadingAnimationComplete && <Charger />}
+
+        {/* Arrow 2 units to the right of Charger */}
+        {isLoadingAnimationComplete && (
+          <group position={[2, -3.4, 2.35]} rotation={[0, Math.PI / 1.3, 0.05]}>
+            {/* Arrow shaft - boxy rectangle */}
+            <mesh position={[0, -0.9, 0]}>
+              <boxGeometry args={[0.1, 3.9, 0.1]} />
+              <meshStandardMaterial color="white" />
+            </mesh>
+            {/* Arrowhead - boxy pyramid pointing upward /\ */}
+
+            {/* Left side of arrowhead - forms left side of /\ */}
+            <mesh position={[-0.12, 1.05, 0]} rotation={[0, 0, Math.PI / 4]}>
+              <boxGeometry args={[0.45, 0.15, 0.1]} />
+              <meshStandardMaterial color="white" />
+            </mesh>
+            {/* Right side of arrowhead - forms right side of /\ */}
+            <mesh position={[0.12, 1.05, 0]} rotation={[0, 0, -Math.PI / 4]}>
+              <boxGeometry args={[0.45, 0.15, 0.1]} />
+              <meshStandardMaterial color="white" />
+            </mesh>
+            {/* Text next to arrow */}
+            <Html position={[-0.2, -1.5, 0]} center={true}>
+              <div
+                style={{
+                  color: "white",
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                  whiteSpace: "nowrap",
+                  rotate: "78deg",
+                }}
+              >
+                Drag the charger head to phones charging port
+              </div>
+            </Html>
+          </group>
+        )}
 
         {/* ProjectsCard - Always render when phone is loaded, but invisible until needed */}
 

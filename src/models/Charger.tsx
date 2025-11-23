@@ -13,6 +13,7 @@ export default function IPhoneCharger() {
   const [lastMousePos, setLastMousePos] = useState<THREE.Vector2 | null>(null);
   const [hasDispatchedReset, setHasDispatchedReset] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const isFirstDragFrame = useRef(true);
 
   // Rope curve points
   const [curve] = useState(
@@ -42,6 +43,7 @@ export default function IPhoneCharger() {
     if (dragging && !hovered) {
       setDragging(false);
       setLastMousePos(null);
+      isFirstDragFrame.current = true; // Reset for next drag
     }
 
     // Check if box has reached the lock position and reset camera (only once)
@@ -55,16 +57,39 @@ export default function IPhoneCharger() {
     // Only follow cursor when dragging AND hovering over the box
     // Block dragging if Y position reaches 3.29
     if (dragging && lastMousePos && hovered && box.current.position.y < 3.32) {
+      // Clamp pointer coordinates to valid range (-1 to 1) to prevent jumps
+      const clampedPointerX = Math.max(-1, Math.min(1, state.pointer.x));
+      const clampedPointerY = Math.max(-1, Math.min(1, state.pointer.y));
+
       // Calculate mouse movement delta
-      const currentMouse = new THREE.Vector2(state.pointer.x, state.pointer.y);
-      const delta = new THREE.Vector2().subVectors(currentMouse, lastMousePos);
+      const currentMouse = new THREE.Vector2(clampedPointerX, clampedPointerY);
+      let delta = new THREE.Vector2().subVectors(currentMouse, lastMousePos);
+
+      // Skip first frame to prevent initial jump (pointer might have moved between event and frame)
+      if (isFirstDragFrame.current) {
+        isFirstDragFrame.current = false;
+        // Reset delta to zero on first frame to prevent jump
+        delta.set(0, 0);
+        // Update lastMousePos to current position for next frame
+        setLastMousePos(currentMouse);
+        return;
+      }
+
+      // Clamp delta to prevent extreme jumps (max 0.1 per frame)
+      const maxDelta = 0.1;
+      const deltaMagnitude = Math.sqrt(delta.x * delta.x + delta.y * delta.y);
+      if (deltaMagnitude > maxDelta) {
+        delta.normalize().multiplyScalar(maxDelta);
+      }
 
       // Calculate distance between cursor and charger head
       const distance = Math.sqrt(delta.x * delta.x + delta.y * delta.y);
 
       // Adaptive speed based on distance - higher speed for larger distances
+      // Cap the adaptive speed to prevent extreme movements
       const baseSpeed = 5;
-      const adaptiveSpeed = baseSpeed + distance * 10; // Increase speed with distance
+      const maxSpeed = 15; // Maximum speed cap
+      const adaptiveSpeed = Math.min(maxSpeed, baseSpeed + distance * 10);
 
       // Convert screen delta to world delta with adaptive speed
       // Different multipliers for X and Y axes to account for camera perspective
@@ -73,6 +98,13 @@ export default function IPhoneCharger() {
         delta.y * adaptiveSpeed,
         0
       );
+
+      // Clamp world delta to prevent extreme movements
+      const maxWorldDelta = 0.5; // Maximum world movement per frame
+      const worldDeltaMagnitude = worldDelta.length();
+      if (worldDeltaMagnitude > maxWorldDelta) {
+        worldDelta.normalize().multiplyScalar(maxWorldDelta);
+      }
 
       // Apply movement to box
       box.current.position.add(worldDelta);
@@ -131,11 +163,15 @@ export default function IPhoneCharger() {
           onPointerDown={(e) => {
             e.stopPropagation();
             setDragging(true);
-            setLastMousePos(new THREE.Vector2(e.pointer.x, e.pointer.y));
+            // Clamp pointer coordinates to prevent jumps
+            const clampedX = Math.max(-1, Math.min(1, e.pointer.x));
+            const clampedY = Math.max(-1, Math.min(1, e.pointer.y));
+            setLastMousePos(new THREE.Vector2(clampedX, clampedY));
           }}
           onPointerUp={() => {
             setDragging(false);
             setLastMousePos(null);
+            isFirstDragFrame.current = true; // Reset for next drag
           }}
         >
           {/* Main rounded rectangle */}

@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  MdOutlineWifi,
-  MdOutlineWorkHistory,
-  MdBolt,
-  MdNotes,
-} from "react-icons/md";
+import { MdOutlineWorkHistory, MdBolt, MdNotes } from "react-icons/md";
 import { FaRegMessage } from "react-icons/fa6";
 import { FiPhone } from "react-icons/fi";
 import Messages from "../apps/Messages";
@@ -22,12 +17,14 @@ import Projects from "../apps/Projects";
 import Education from "../apps/Education";
 import Contacts from "../apps/Contacts";
 import Safari from "../apps/Safari";
+import Timer from "../apps/Timer";
 import {
   IoSchoolOutline,
   IoMailOpenOutline,
   IoSettingsOutline,
   IoCalculatorOutline,
   IoCalendarClearOutline,
+  IoTimeOutline,
 } from "react-icons/io5";
 import { VscSnake } from "react-icons/vsc";
 import { ImSafari } from "react-icons/im";
@@ -53,6 +50,7 @@ const PhoneMainScreen = () => {
   const [showEducation, setShowEducation] = useState(false);
   const [showContacts, setShowContacts] = useState(false);
   const [showSafari, setShowSafari] = useState(false);
+  const [showTimer, setShowTimer] = useState(false);
   const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
 
   // Update time every second
@@ -86,6 +84,7 @@ const PhoneMainScreen = () => {
       setShowEducation(false);
       setShowContacts(false);
       setShowSafari(false);
+      setShowTimer(false);
     };
 
     window.addEventListener("closeAllApps", handleCloseAllApps);
@@ -201,6 +200,12 @@ const PhoneMainScreen = () => {
       gradientFrom: "rgba(34, 197, 94, 0.85)",
       gradientTo: "rgba(132, 204, 22, 0.85)",
     },
+    {
+      name: "Timer",
+      icon: <IoTimeOutline className="text-white text-2xl z-1 w-10 h-10" />,
+      gradientFrom: "rgba(249, 115, 22, 0.85)",
+      gradientTo: "rgba(239, 68, 68, 0.85)",
+    },
   ];
 
   // Handle app clicks
@@ -251,6 +256,8 @@ const PhoneMainScreen = () => {
       setShowEducation(true);
     } else if (appName === "Phone") {
       setShowContacts(true);
+    } else if (appName === "Timer") {
+      setShowTimer(true);
     }
   };
 
@@ -401,6 +408,16 @@ const PhoneMainScreen = () => {
     );
   }
 
+  // Show Timer app if selected
+  if (showTimer) {
+    return (
+      <Timer
+        onClose={() => setShowTimer(false)}
+        clickPosition={clickPosition}
+      />
+    );
+  }
+
   return (
     <>
       <style>
@@ -420,7 +437,7 @@ const PhoneMainScreen = () => {
         <div className="relative z-10 flex-1 flex flex-col">
           {/* Time Widget */}
           <div className="px-6 py-4">
-            <div className="text-white ml-6 mt-[-7px] flex">
+            <div className="text-white ml-3 mt-[-7px] flex">
               <div className="text-3xl font-light">
                 {currentTime.toLocaleTimeString([], {
                   hour: "numeric",
@@ -428,10 +445,9 @@ const PhoneMainScreen = () => {
                   hour12: false,
                 })}
               </div>
-              <div className="ml-87  flex items-center justify-center gap-3">
-                <MdOutlineWifi className="text-white text-2xl z-1 w-10 h-10" />
+              <div className="ml-101 flex items-center justify-center">
                 {/* Battery container */}
-                <div className="relative w-10 h-6 rounded-md bg-white flex items-center justify-center">
+                <div className="relative w-12 h-7 rounded-md bg-white flex items-center justify-center">
                   {/* Battery outline */}
                   <div className="absolute inset-[2px] rounded-md bg-black flex items-center justify-center">
                     {/* Green charge fill */}

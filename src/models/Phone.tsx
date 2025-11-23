@@ -1,15 +1,17 @@
-import { Html, useGLTF } from "@react-three/drei";
+import { Edges, Html, useGLTF } from "@react-three/drei";
 import { useRef, useState, useEffect } from "react";
 import PhoneScreen from "../components/PhoneScreen";
+import type { Object3D } from "three";
 
 export default function Phone({
   position,
 }: {
   position: [number, number, number];
 }) {
-  const phone = useGLTF(
-    "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/iphone-x/model.gltf"
-  );
+  //const phone = useGLTF(
+  //  "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/iphone-x/model.gltf"
+  //);
+  const phone = useGLTF("public/Iphone.glb");
 
   const [, setIsHolding] = useState(false);
   const [_, setHoldTime] = useState(0);
@@ -24,6 +26,7 @@ export default function Phone({
   const globalMouseUpHandlerRef = useRef<((e: MouseEvent) => void) | null>(
     null
   );
+  const spotTarget = useRef<Object3D | null>(null);
 
   const resetTimer = () => {
     // Don't reset if hold has completed successfully
@@ -232,6 +235,22 @@ export default function Phone({
         <boxGeometry args={[0.05, 0.4, 0.1]} />
         <meshBasicMaterial color="transparent" visible={false} />
       </mesh>
+      {/* The spotlight target */}
+      <mesh ref={spotTarget} position={[0.165, -0.29, -0.042]} visible={false}>
+        <boxGeometry args={[0.01, 0.01, 0.01]} />
+        <meshBasicMaterial />
+      </mesh>
+
+      {/* Spotlight shining upward */}
+      <spotLight
+        position={[0.165, -1, -0.042]}
+        intensity={4}
+        angle={0.8}
+        penumbra={0.4}
+        distance={5}
+        color="white"
+        target={spotTarget.current || undefined}
+      />
     </group>
   );
 }

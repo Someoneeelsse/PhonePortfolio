@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { FaPlus, FaTrash, FaChevronRight } from "react-icons/fa";
+import { useEffect, useState, useRef } from "react";
+import { FaPlus, FaTrash } from "react-icons/fa";
 import { MdNotes } from "react-icons/md";
 import AppsLayout from "./AppsLayout";
 
@@ -24,6 +24,7 @@ const Notes = ({
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [noteTitle, setNoteTitle] = useState("");
   const [noteContent, setNoteContent] = useState("");
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load notes from localStorage on mount
   useEffect(() => {
@@ -32,9 +33,11 @@ const Notes = ({
       if (savedNotes) {
         try {
           const parsedNotes = JSON.parse(savedNotes);
-          // Convert date strings back to Date objects
+          // Convert date strings back to Date objects and ensure content exists
           const notesWithDates = parsedNotes.map((note: any) => ({
             ...note,
+            content: note.content || "",
+            title: note.title || "New Note",
             createdAt: new Date(note.createdAt),
             updatedAt: new Date(note.updatedAt),
           }));
@@ -80,8 +83,29 @@ const Notes = ({
       setShowContent(true);
     }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Clean up save timeout on unmount
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
   }, []);
+
+  // Sync noteContent and noteTitle when selectedNote ID changes (not when notes changes to avoid overwriting user input)
+  useEffect(() => {
+    if (selectedNote) {
+      // Find the latest version of the note from the notes array
+      const latestNote = notes.find((n) => n.id === selectedNote.id);
+      const noteToUse = latestNote || selectedNote;
+      setNoteTitle(noteToUse.title || "");
+      setNoteContent(noteToUse.content || "");
+    } else {
+      setNoteTitle("");
+      setNoteContent("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedNote?.id]); // Only sync when selected note ID changes, not when notes array updates
 
   const handleCreateNote = () => {
     const newNote: Note = {
@@ -93,30 +117,49 @@ const Notes = ({
     };
     setNotes([newNote, ...notes]);
     setSelectedNote(newNote);
-    setNoteTitle(newNote.title);
-    setNoteContent(newNote.content);
+    setNoteTitle(newNote.title || "");
+    setNoteContent(newNote.content || "");
   };
 
   const handleSelectNote = (note: Note) => {
-    setSelectedNote(note);
-    setNoteTitle(note.title);
-    setNoteContent(note.content);
+    // Find the latest version from the notes array to ensure we have the most up-to-date content
+    const latestNote = notes.find((n) => n.id === note.id) || note;
+    setSelectedNote(latestNote);
+    // The useEffect will sync the content, but we can also set it here for immediate update
+    setNoteTitle(latestNote.title || "");
+    setNoteContent(latestNote.content || "");
   };
 
-  const handleSaveNote = () => {
+  const handleSaveNote = (title?: string, content?: string) => {
     if (!selectedNote) return;
+
+    // Use provided values or current state values
+    const titleToSave = title !== undefined ? title : noteTitle;
+    const contentToSave = content !== undefined ? content : noteContent;
 
     const updatedNote: Note = {
       ...selectedNote,
-      title: noteTitle.trim() || "New Note",
-      content: noteContent,
+      title: titleToSave.trim() || "New Note",
+      content: contentToSave,
       updatedAt: new Date(),
     };
 
-    setNotes(
-      notes.map((note) => (note.id === selectedNote.id ? updatedNote : note))
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === selectedNote.id ? updatedNote : note
+      )
     );
     setSelectedNote(updatedNote);
+  };
+
+  // Auto-save function with debouncing - saves to localStorage as you type
+  const scheduleSave = (title?: string, content?: string) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    saveTimeoutRef.current = setTimeout(() => {
+      handleSaveNote(title, content);
+    }, 300); // Save 300ms after user stops typing (reduced from 500ms for faster saves)
   };
 
   if (showLoading) {
@@ -141,7 +184,7 @@ const Notes = ({
     // Show note editor if a note is selected
     if (selectedNote) {
       return (
-        <AppsLayout onClose={onClose} title="Notes" textColor="text-gray-200">
+        <AppsLayout onClose={onClose} title="Notes" textColor="text-gray-200" statusBarTextColor="text-black" batteryColorScheme="light">
           <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
             {/* Note Editor */}
             <div className="flex-1 flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 overflow-hidden relative z-10">
@@ -150,8 +193,16 @@ const Notes = ({
                 <input
                   type="text"
                   value={noteTitle}
-                  onChange={(e) => setNoteTitle(e.target.value)}
-                  onBlur={handleSaveNote}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    const newTitle = e.target.value;
+                    setNoteTitle(newTitle);
+                    scheduleSave(newTitle, noteContent);
+                  }}
+                  onBlur={(e) => {
+                    e.stopPropagation();
+                    handleSaveNote();
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     e.currentTarget.focus();
@@ -169,25 +220,39 @@ const Notes = ({
               </div>
 
               {/* Content Textarea */}
-              <div className="flex-1 px-4 py-4 flex flex-col min-h-0 relative z-10 bg-white/50">
+              <div className="flex-1 px-4 py-4 flex flex-col min-h-0 relative z-10 bg-white/50 overflow-auto">
                 <textarea
                   value={noteContent}
                   onChange={(e) => {
-                    setNoteContent(e.target.value);
+                    e.stopPropagation();
+                    const newValue = e.target.value;
+                    setNoteContent(newValue);
+                    scheduleSave(noteTitle, newValue);
                   }}
-                  onBlur={handleSaveNote}
+                  onBlur={(e) => {
+                    e.stopPropagation();
+                    // Clear any pending save and save immediately
+                    if (saveTimeoutRef.current) {
+                      clearTimeout(saveTimeoutRef.current);
+                    }
+                    handleSaveNote();
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     e.currentTarget.focus();
                   }}
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                  }}
                   placeholder="Start writing..."
-                  className="flex-1 w-full text-base outline-none resize-none bg-transparent text-gray-900 leading-relaxed pointer-events-auto select-text"
+                  className="flex-1 w-full text-base outline-none resize-none bg-transparent text-gray-900 leading-relaxed pointer-events-auto select-text min-h-[200px]"
                   style={{
                     fontFamily: "system-ui, -apple-system, sans-serif",
                     pointerEvents: "auto",
                     zIndex: 10,
                     userSelect: "text",
                     WebkitUserSelect: "text",
+                    minHeight: "200px",
                   }}
                 />
               </div>
@@ -199,7 +264,7 @@ const Notes = ({
 
     // Show notes list
     return (
-      <AppsLayout onClose={onClose} title="Notes">
+      <AppsLayout onClose={onClose} title="Notes" statusBarTextColor="text-black" batteryColorScheme="light">
         <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
           {/* Notes List */}
           <div className="flex-1 overflow-y-auto">
@@ -244,23 +309,26 @@ const Notes = ({
                           )}
                           <span className="text-xs text-gray-500">{date}</span>
                         </div>
-                        <div className="flex flex-col items-center gap-2 ml-2 flex-shrink-0">
-                          <FaChevronRight className="text-gray-400 text-sm mt-1" />
+                        <div className="flex items-center ml-2 flex-shrink-0">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
+                              e.preventDefault();
                               // If this note is currently selected, clear selection
                               if (isSelected) {
                                 setSelectedNote(null);
                                 setNoteTitle("");
                                 setNoteContent("");
                               }
-                              // Remove the note from the list
-                              setNotes(notes.filter((n) => n.id !== note.id));
+                              // Remove the note from the list using functional update
+                              setNotes((prevNotes) =>
+                                prevNotes.filter((n) => n.id !== note.id)
+                              );
                             }}
-                            className="text-red-500 hover:text-red-600 transition-colors"
+                            className="text-red-500 hover:text-red-600 active:text-red-700 transition-colors p-2 -mr-2"
+                            type="button"
                           >
-                            <FaTrash className="text-sm" />
+                            <FaTrash className="text-xl" />
                           </button>
                         </div>
                       </div>

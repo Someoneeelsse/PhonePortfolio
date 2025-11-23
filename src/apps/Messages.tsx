@@ -104,9 +104,9 @@ const Messages = ({
         <div
           className="flex flex-col items-center space-y-4 animate-fadeInFromCenter"
           style={{
-            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            transformOrigin: "50% 100%",
             animation:
-              "appOpen 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+              "appOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
           }}
         >
           <FaRegMessage className="text-white text-6xl" />
@@ -123,10 +123,12 @@ const Messages = ({
         <AppsLayout
           onClose={() => setSelectedConversation(null)}
           title={selectedConversation.name}
+          statusBarTextColor="text-black"
+          batteryColorScheme="light"
         >
           <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
             {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+            <div className="flex-1 overflow-y-auto px-4 py-6 space-y-5">
               {selectedConversation.messages.map((message) => (
                 <div
                   key={message.id}
@@ -137,32 +139,30 @@ const Messages = ({
                   {/* Avatar for received messages */}
                   {!message.isMe && (
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold shadow-sm flex-shrink-0 ${getAvatarColor(
+                      className={`w-14 h-14 rounded-full flex items-center justify-center text-white text-base font-semibold shadow-md flex-shrink-0 ${getAvatarColor(
                         selectedConversation.name
                       )}`}
                     >
                       {getInitials(selectedConversation.name)}
                     </div>
                   )}
-                  <div className="flex flex-col max-w-[75%]">
+                  <div className="flex flex-col max-w-[80%]">
                     <div
-                      className={`px-4 py-2.5  ${
+                      className={`px-5 py-3  ${
                         message.isMe
                           ? "bg-gradient-to-br from-green-500 to-green-600 text-white rounded-br-xl rounded-tl-xl shadow-md"
                           : "bg-white text-gray-900 rounded-bl-xl rounded-tr-xl shadow-sm border border-gray-200"
                       }`}
                     >
-                      <p className="text-base leading-relaxed">
-                        {message.text}
-                      </p>
+                      <p className="text-lg leading-relaxed">{message.text}</p>
                     </div>
                     <div
-                      className={`flex items-center gap-1.5 mt-1 px-1 ${
+                      className={`flex items-center gap-2 mt-1.5 px-1 ${
                         message.isMe ? "justify-end" : "justify-start"
                       }`}
                     >
                       <span
-                        className={`text-xs ${
+                        className={`text-sm ${
                           message.isMe ? "text-gray-400" : "text-gray-500"
                         }`}
                       >
@@ -170,7 +170,7 @@ const Messages = ({
                       </span>
                       {message.isMe && (
                         <span
-                          className={`text-xs ${getStatusColor(
+                          className={`text-sm ${getStatusColor(
                             message.status
                           )}`}
                         >
@@ -181,26 +181,12 @@ const Messages = ({
                   </div>
                   {/* Avatar for sent messages */}
                   {message.isMe && (
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold shadow-sm flex-shrink-0 bg-gradient-to-br from-gray-400 to-gray-500">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-base font-semibold shadow-md flex-shrink-0 bg-gradient-to-br from-gray-400 to-gray-500">
                       ME
                     </div>
                   )}
                 </div>
               ))}
-            </div>
-
-            {/* Message Input */}
-            <div className="bg-white px-4 py-3 border-t border-gray-200 shadow-lg">
-              <div className="flex items-center space-x-3">
-                <input
-                  type="text"
-                  placeholder="Message"
-                  className="flex-1 px-4 py-2.5 bg-gray-50 text-gray-900 placeholder-gray-400 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                />
-                <button className="bg-gradient-to-br from-green-500 to-green-600 text-white p-2.5 rounded-full hover:from-green-600 hover:to-green-700 transition-all shadow-md hover:shadow-lg transform hover:scale-105">
-                  <FaRegMessage className="text-sm" />
-                </button>
-              </div>
             </div>
           </div>
         </AppsLayout>
@@ -208,7 +194,12 @@ const Messages = ({
     }
 
     return (
-      <AppsLayout onClose={onClose} title="Messages">
+      <AppsLayout
+        onClose={onClose}
+        title="Messages"
+        statusBarTextColor="text-black"
+        batteryColorScheme="light"
+      >
         <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
           {/* Conversations List */}
           <div className="flex-1 overflow-y-auto">

@@ -249,7 +249,7 @@ const PhoneScreen = () => {
 
       {showRedDot && showBattery && !batterySequenceComplete && (
         <div
-          className="flex items-center justify-center"
+          className="flex items-center justify-center pl-10"
           style={{
             animation: "blink3times 3.2s ease-in-out",
           }}

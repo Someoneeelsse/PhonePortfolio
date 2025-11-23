@@ -25,11 +25,11 @@ const Safari = ({
     return (
       <div className="w-151 h-321.5 rounded-[71px] relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-500 to-cyan-600">
         <div
-          className="flex flex-col items-center space-y-4"
+          className="flex flex-col items-center space-y-4 animate-fadeInFromCenter"
           style={{
-            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            transformOrigin: "50% 100%",
             animation:
-              "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+              "appOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
           }}
         >
           <ImSafari className="text-white text-6xl" />
@@ -41,7 +41,7 @@ const Safari = ({
 
   if (showContent) {
     return (
-      <AppsLayout onClose={onClose} title="Safari">
+      <AppsLayout onClose={onClose} title="Safari" statusBarTextColor="text-black" batteryColorScheme="light">
         <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
           <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-6">
             <div className="text-center space-y-6 max-w-full">

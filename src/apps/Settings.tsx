@@ -57,7 +57,7 @@ const Settings = ({
 
   if (showContent) {
     return (
-      <AppsLayout onClose={onClose} title="Settings">
+      <AppsLayout onClose={onClose} title="Settings" statusBarTextColor="text-black" batteryColorScheme="light">
         <div className="h-full flex flex-col bg-gray-50 pt-30">
           {/* Settings Content */}
           <div className="flex-1 overflow-y-auto">

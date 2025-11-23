@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FiPhone } from "react-icons/fi";
 import AppsLayout from "./AppsLayout";
 
 const Contacts = ({
@@ -50,7 +51,7 @@ const Contacts = ({
   };
 
   const name = "Jakub Grzybowski";
-  const phoneNumber = "+47 xxx xx xxx";
+  const phoneNumber = "+47 405 75 491";
   const initials = getInitials(name);
   const avatarColor = getAvatarColor(name);
 
@@ -58,14 +59,14 @@ const Contacts = ({
     return (
       <div className="w-151 h-321.5 rounded-[71px] relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600">
         <div
-          className="flex flex-col items-center space-y-4"
+          className="flex flex-col items-center space-y-4 animate-fadeInFromCenter"
           style={{
-            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            transformOrigin: "50% 100%",
             animation:
-              "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+              "appOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
           }}
         >
-          <div className="text-white text-6xl">📞</div>
+          <FiPhone className="text-white text-6xl" />
           <div className="text-white text-2xl font-semibold">Contacts</div>
         </div>
       </div>
@@ -74,7 +75,12 @@ const Contacts = ({
 
   if (showContent) {
     return (
-      <AppsLayout onClose={onClose} title="Contacts">
+      <AppsLayout
+        onClose={onClose}
+        title="Contacts"
+        statusBarTextColor="text-black"
+        batteryColorScheme="light"
+      >
         <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
           <div className="flex-1 overflow-y-auto">
             {/* Profile Section */}
@@ -92,8 +98,8 @@ const Contacts = ({
               </h1>
 
               {/* Phone Number */}
-              <div className="flex items-center gap-3 mt-4">
-                <div className="text-2xl">📞</div>
+              <div className="flex items-center justify-center gap-3 mt-4">
+                <FiPhone className="text-gray-600 text-2xl w-6 h-6" />
                 <a
                   href={`tel:${phoneNumber.replace(/\s/g, "")}`}
                   className="text-2xl text-blue-600 font-medium hover:text-blue-700 transition-colors"

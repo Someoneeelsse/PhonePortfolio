@@ -42,7 +42,7 @@ const Github = ({
 
   if (showContent) {
     return (
-      <AppsLayout onClose={onClose} title="GitHub">
+      <AppsLayout onClose={onClose} title="GitHub" statusBarTextColor="text-black" batteryColorScheme="light">
         <div className="h-full flex flex-col bg-white pt-30">
           {/* GitHub content - opens in new window due to X-Frame-Options */}
           <div className="flex-1 w-full h-full flex flex-col items-center justify-center px-6">
