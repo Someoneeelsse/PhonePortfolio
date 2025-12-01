@@ -150,73 +150,102 @@ export default function IPhoneCharger() {
 
   return (
     <>
-      <group position={[0.25, -5.2, 2.35]}>
+      <group>
         {/* Rope */}
         <mesh ref={band} castShadow receiveShadow material={cableMaterial} />
 
         {/* Draggable Rounded Rectangle with smaller rectangle */}
+        {/* DRAGGABLE REALISTIC LIGHTNING CONNECTOR */}
         <group
           ref={box}
-          position={[0, 0, 0]} // start in middle
+          position={[0, 0, 0]}
           onPointerOver={() => setHovered(true)}
           onPointerOut={() => setHovered(false)}
           onPointerDown={(e) => {
             e.stopPropagation();
-            setDragging(true);
-            // Clamp pointer coordinates to prevent jumps
             const clampedX = Math.max(-1, Math.min(1, e.pointer.x));
             const clampedY = Math.max(-1, Math.min(1, e.pointer.y));
+            setDragging(true);
             setLastMousePos(new THREE.Vector2(clampedX, clampedY));
           }}
           onPointerUp={() => {
             setDragging(false);
             setLastMousePos(null);
-            isFirstDragFrame.current = true; // Reset for next drag
+            isFirstDragFrame.current = true;
           }}
         >
-          {/* Main rounded rectangle */}
+          {/* === WHITE PLASTIC BODY (same approximate size as before) === */}
           <RoundedBox
+            args={[0.26, 0.42, 0.12]} // a bit thicker and more realistic
+            radius={0.05}
+            smoothness={16}
+            castShadow
+            receiveShadow
             position={[0, 0, 0]}
-            args={[0.25, 0.4, 0.1]} // width, height, depth
-            radius={0.015} // rounded corners
-            smoothness={8} // smoothness of rounded corners
-            castShadow
-            receiveShadow
           >
             <meshStandardMaterial
-              color={hovered && !isLocked ? "#ff6b6b" : "white"}
-              metalness={0.1}
-              roughness={0.3}
-            />
-          </RoundedBox>
-          <RoundedBox
-            position={[0, -0.22, 0]}
-            args={[0.1, 0.05, 0.08]} // width, height, depth
-            radius={0.01} // rounded corners
-            smoothness={8} // smoothness of rounded corners
-            castShadow
-            receiveShadow
-          >
-            <meshStandardMaterial
-              color={hovered && !isLocked ? "#ff6b6b" : "white"}
-              metalness={0.1}
-              roughness={0.3}
+              color={hovered && !isLocked ? "#ff6b6b" : "#ffffff"}
+              metalness={0.05}
+              roughness={0.4}
             />
           </RoundedBox>
 
-          {/* Smaller rectangle at the end */}
+          {/* === CHAMFER / TRANSITION PART === */}
           <RoundedBox
-            position={[0, 0.245, 0.005]} // positioned at the top end
-            args={[0.17, 0.1, 0.01]} // smaller dimensions
-            radius={0.01} // smaller rounded corners
-            smoothness={6}
+            args={[0.15, 0.12, 0.11]}
+            radius={0.03}
+            smoothness={14}
+            position={[0, -0.23, 0]}
             castShadow
             receiveShadow
           >
             <meshStandardMaterial
-              color={hovered && !isLocked ? "#ff6b6b" : "#f0f0f0"}
-              metalness={0.1}
-              roughness={0.3}
+              color={hovered && !isLocked ? "#ff6b6b" : "#fafafa"}
+              metalness={0.05}
+              roughness={0.4}
+            />
+          </RoundedBox>
+
+          {/* === LIGHTNING METAL TIP === */}
+          <RoundedBox
+            args={[0.17, 0.11, 0.04]} // metallic tip thickness
+            radius={0.008}
+            smoothness={12}
+            position={[0, 0.28, 0.015]}
+            castShadow
+            receiveShadow
+          >
+            <meshStandardMaterial
+              color="#d0d0d0"
+              metalness={0.6}
+              roughness={0.15}
+            />
+          </RoundedBox>
+
+          {/* === LIGHTNING BLACK INSERTS (fake holes) === */}
+          <RoundedBox
+            args={[0.11, 0.04, 0.005]}
+            radius={0.003}
+            smoothness={8}
+            position={[0, 0.28, 0.04]}
+          >
+            <meshStandardMaterial
+              color="#444" // dark insert
+              metalness={0.2}
+              roughness={0.5}
+            />
+          </RoundedBox>
+
+          <RoundedBox
+            args={[0.11, 0.04, 0.005]}
+            radius={0.003}
+            smoothness={8}
+            position={[0, 0.28, -0.01]}
+          >
+            <meshStandardMaterial
+              color="#444"
+              metalness={0.2}
+              roughness={0.5}
             />
           </RoundedBox>
         </group>

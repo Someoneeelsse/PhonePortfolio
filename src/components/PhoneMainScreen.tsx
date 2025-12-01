@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { MdOutlineWorkHistory, MdBolt, MdNotes } from "react-icons/md";
 import { FaRegMessage } from "react-icons/fa6";
 import { FiPhone } from "react-icons/fi";
+import { GoLocation } from "react-icons/go";
 import Messages from "../apps/Messages";
 import Email from "../apps/Email";
 import Github from "../apps/Github";
 import LinkedIn from "../apps/LinkedIn";
-import Settings from "../apps/Settings";
+//import Settings from "../apps/Settings";
 import Calculator from "../apps/Calculator";
 import Notes from "../apps/Notes";
 import Snake from "../apps/Snake";
@@ -18,10 +19,11 @@ import Education from "../apps/Education";
 import Contacts from "../apps/Contacts";
 import Safari from "../apps/Safari";
 import Timer from "../apps/Timer";
+import Photos from "../apps/Photos";
 import {
   IoSchoolOutline,
   IoMailOpenOutline,
-  IoSettingsOutline,
+  //IoSettingsOutline,
   IoCalculatorOutline,
   IoCalendarClearOutline,
   IoTimeOutline,
@@ -33,13 +35,81 @@ import { PiImageSquare } from "react-icons/pi";
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { LuProjector, LuGithub } from "react-icons/lu";
 
+interface WeatherData {
+  temp: number;
+  condition: string;
+  description: string;
+  minTemp: number;
+  maxTemp: number;
+  loading: boolean;
+  error: string | null;
+}
+
+// Get weather icon emoji based on condition
+const getWeatherIcon = (condition: string) => {
+  const lowerCondition = condition.toLowerCase();
+  if (
+    lowerCondition.includes("clearsky") ||
+    lowerCondition === "clear" ||
+    lowerCondition.includes("sunny")
+  ) {
+    return "☀️";
+  } else if (lowerCondition.includes("thunder")) {
+    return "⛈️";
+  } else if (
+    lowerCondition.includes("heavyrain") ||
+    lowerCondition.includes("heavy rain")
+  ) {
+    return "🌧️";
+  } else if (
+    lowerCondition.includes("rain") ||
+    lowerCondition.includes("drizzle")
+  ) {
+    return "🌦️";
+  } else if (
+    lowerCondition.includes("heavysnow") ||
+    lowerCondition.includes("heavy snow")
+  ) {
+    return "❄️";
+  } else if (
+    lowerCondition.includes("snow") ||
+    lowerCondition.includes("sleet")
+  ) {
+    return "🌨️";
+  } else if (lowerCondition.includes("cloudy") || lowerCondition === "clouds") {
+    return "☁️";
+  } else if (
+    lowerCondition.includes("partlycloudy") ||
+    lowerCondition.includes("partly cloudy") ||
+    lowerCondition.includes("fair")
+  ) {
+    return "⛅";
+  } else if (
+    lowerCondition.includes("fog") ||
+    lowerCondition.includes("mist") ||
+    lowerCondition.includes("haze")
+  ) {
+    return "🌫️";
+  }
+  return "🌤️";
+};
+
 const PhoneMainScreen = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [weatherData, setWeatherData] = useState<WeatherData>({
+    temp: 0,
+    condition: "",
+    description: "",
+    minTemp: 0,
+    maxTemp: 0,
+    loading: true,
+    error: null,
+  });
   const [showMessages, setShowMessages] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [showGithub, setShowGithub] = useState(false);
   const [showLinkedIn, setShowLinkedIn] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+  //const [showSettings, setShowSettings] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [showSnake, setShowSnake] = useState(false);
@@ -51,7 +121,9 @@ const PhoneMainScreen = () => {
   const [showContacts, setShowContacts] = useState(false);
   const [showSafari, setShowSafari] = useState(false);
   const [showTimer, setShowTimer] = useState(false);
+  const [showPhotos, setShowPhotos] = useState(false);
   const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
+  const [isChargerConnected, setIsChargerConnected] = useState(true);
 
   // Update time every second
   useEffect(() => {
@@ -60,6 +132,126 @@ const PhoneMainScreen = () => {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  // Fetch weather data for Bergen
+  useEffect(() => {
+    const fetchBergenWeather = async () => {
+      const bergenLat = 60.3913;
+      const bergenLon = 5.3221;
+
+      try {
+        const isDevelopment =
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1";
+
+        let apiUrl;
+        if (isDevelopment) {
+          apiUrl = `/api/metno/weatherapi/locationforecast/2.0/compact?lat=${bergenLat}&lon=${bergenLon}`;
+        } else {
+          apiUrl = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${bergenLat}&lon=${bergenLon}`;
+        }
+
+        let response;
+        let data;
+
+        try {
+          response = await fetch(apiUrl, {
+            headers: {
+              "User-Agent": "WeatherApp/1.0 (someoneelssesmainportfolio)",
+            },
+          });
+
+          if (response.ok) {
+            data = await response.json();
+          } else {
+            throw new Error(`API returned ${response.status}`);
+          }
+        } catch (fetchError: any) {
+          if (
+            !isDevelopment &&
+            (fetchError.message?.includes("CORS") ||
+              fetchError.message?.includes("blocked"))
+          ) {
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(
+              apiUrl
+            )}`;
+            response = await fetch(proxyUrl);
+            if (!response.ok) {
+              throw new Error("Failed to fetch weather data");
+            }
+            data = await response.json();
+          } else {
+            throw fetchError;
+          }
+        }
+
+        if (!data || !data.properties) {
+          throw new Error("Invalid API response");
+        }
+
+        // Get current weather (first timeseries entry)
+        const currentItem = data.properties.timeseries[0];
+        const temp = Math.round(
+          currentItem.data.instant.details.air_temperature
+        );
+        const symbolCode =
+          currentItem.data.next_6_hours?.summary?.symbol_code ||
+          currentItem.data.next_1_hours?.summary?.symbol_code ||
+          "clearsky_day";
+
+        const condition = symbolCode.replace(/_day|_night|_polartwilight/g, "");
+        const description = condition
+          .replace(/_/g, " ")
+          .split(" ")
+          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+
+        // Calculate min/max temperatures for today
+        // Get all temperatures for today (next 24 hours)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const todayTemps = data.properties.timeseries
+          .filter((item: any) => {
+            const itemDate = new Date(item.time);
+            return itemDate >= today && itemDate < tomorrow;
+          })
+          .map((item: any) => item.data.instant.details.air_temperature);
+
+        const minTemp =
+          todayTemps.length > 0 ? Math.round(Math.min(...todayTemps)) : temp;
+        const maxTemp =
+          todayTemps.length > 0 ? Math.round(Math.max(...todayTemps)) : temp;
+
+        setWeatherData({
+          temp,
+          condition,
+          description,
+          minTemp,
+          maxTemp,
+          loading: false,
+          error: null,
+        });
+      } catch (error: any) {
+        setWeatherData({
+          temp: 0,
+          condition: "",
+          description: "",
+          minTemp: 0,
+          maxTemp: 0,
+          loading: false,
+          error: error.message || "Failed to load weather",
+        });
+      }
+    };
+
+    fetchBergenWeather();
+    // Refresh every 30 minutes
+    const interval = setInterval(fetchBergenWeather, 30 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // Listen for close all apps event (from Scene reset)
@@ -73,7 +265,7 @@ const PhoneMainScreen = () => {
       setShowEmail(false);
       setShowGithub(false);
       setShowLinkedIn(false);
-      setShowSettings(false);
+      //setShowSettings(false);
       setShowCalculator(false);
       setShowNotes(false);
       setShowSnake(false);
@@ -85,12 +277,33 @@ const PhoneMainScreen = () => {
       setShowContacts(false);
       setShowSafari(false);
       setShowTimer(false);
+      setShowPhotos(false);
     };
 
     window.addEventListener("closeAllApps", handleCloseAllApps);
 
     return () => {
       window.removeEventListener("closeAllApps", handleCloseAllApps);
+    };
+  }, []);
+
+  // Listen for charger connection status
+  useEffect(() => {
+    const handleChargerConnected = (event: Event) => {
+      const customEvent = event as CustomEvent<{ connected: boolean }>;
+      setIsChargerConnected(customEvent.detail.connected);
+    };
+
+    window.addEventListener(
+      "chargerConnected",
+      handleChargerConnected as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "chargerConnected",
+        handleChargerConnected as EventListener
+      );
     };
   }, []);
 
@@ -138,12 +351,12 @@ const PhoneMainScreen = () => {
       gradientFrom: "rgba(147, 51, 234, 0.85)",
       gradientTo: "rgba(99, 102, 241, 0.85)",
     },
-    {
+    /*{
       name: "Settings",
       icon: <IoSettingsOutline className="text-white text-2xl z-1 w-10 h-10" />,
       gradientFrom: "rgba(156, 163, 175, 0.85)",
       gradientTo: "rgba(107, 114, 128, 0.85)",
-    },
+    },*/
     {
       name: "Job",
       icon: (
@@ -236,9 +449,9 @@ const PhoneMainScreen = () => {
     } else if (appName === "LinkedIn") {
       // Open LinkedIn directly in new tab
       window.open("https://linkedin.com", "_blank", "noopener,noreferrer");
-    } else if (appName === "Settings") {
+    } /*else if (appName === "Settings") {
       setShowSettings(true);
-    } else if (appName === "Calculator") {
+    }*/ else if (appName === "Calculator") {
       setShowCalculator(true);
     } else if (appName === "Notes") {
       setShowNotes(true);
@@ -258,6 +471,8 @@ const PhoneMainScreen = () => {
       setShowContacts(true);
     } else if (appName === "Timer") {
       setShowTimer(true);
+    } else if (appName === "Photos") {
+      setShowPhotos(true);
     }
   };
 
@@ -302,14 +517,14 @@ const PhoneMainScreen = () => {
   }
 
   // Show Settings app if selected
-  if (showSettings) {
+  /*if (showSettings) {
     return (
       <Settings
         onClose={() => setShowSettings(false)}
         clickPosition={clickPosition}
       />
     );
-  }
+  }*/
 
   // Show Calculator app if selected
   if (showCalculator) {
@@ -418,6 +633,16 @@ const PhoneMainScreen = () => {
     );
   }
 
+  // Show Photos app if selected
+  if (showPhotos) {
+    return (
+      <Photos
+        onClose={() => setShowPhotos(false)}
+        clickPosition={clickPosition}
+      />
+    );
+  }
+
   return (
     <>
       <style>
@@ -454,8 +679,9 @@ const PhoneMainScreen = () => {
                     <div className="absolute left-[2px] top-[2px] bottom-[2px] w-[50%] bg-green-400 rounded-l-sm transition-all duration-700"></div>
 
                     {/* Thunderbolt (lightning bolt) */}
-
-                    <MdBolt className="text-white text-2xl z-1 w-5 h-5" />
+                    {isChargerConnected && (
+                      <MdBolt className="text-white text-2xl z-1 w-5 h-5" />
+                    )}
                   </div>
 
                   {/* Battery tip */}
@@ -465,9 +691,210 @@ const PhoneMainScreen = () => {
             </div>
           </div>
 
-          {/* Apps Grid */}
+          {/* Apps Grid with Clock Widget */}
           <div className="flex-1 px-4 pb-20 mt-5">
-            <div className="grid grid-cols-4 gap-4">
+            <div
+              className="grid grid-cols-4 gap-4"
+              style={{ gridAutoRows: "minmax(auto, auto)" }}
+            >
+              {/* Clock Widget - 2x2 */}
+              <div
+                className="col-span-2 row-span-2 rounded-2xl flex flex-col justify-center items-center text-white relative overflow-hidden backdrop-blur-xl p-4"
+                style={{
+                  background: `linear-gradient(135deg, rgba(75, 85, 99, 0.85), rgba(55, 65, 81, 0.85))`,
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border: "2px solid transparent",
+                  boxShadow:
+                    "0 8px 32px 0 rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.1)",
+                  alignSelf: "stretch",
+                }}
+              >
+                {/* Analog Clock */}
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <svg
+                    className="w-full h-full"
+                    viewBox="0 0 200 200"
+                    style={{ maxWidth: "220px", maxHeight: "220px" }}
+                  >
+                    {/* Dashed circle border */}
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="90"
+                      fill="none"
+                      stroke="rgba(255, 255, 255, 0.6)"
+                      strokeWidth="2"
+                      strokeDasharray="4 8"
+                      strokeLinecap="round"
+                    />
+
+                    {/* Hour marks (12 dashes pointing inward) */}
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const angle = (i * 30 - 90) * (Math.PI / 180);
+                      const x1 = 100 + 85 * Math.cos(angle);
+                      const y1 = 100 + 85 * Math.sin(angle);
+                      const x2 = 100 + 75 * Math.cos(angle);
+                      const y2 = 100 + 75 * Math.sin(angle);
+                      return (
+                        <line
+                          key={i}
+                          x1={x1}
+                          y1={y1}
+                          x2={x2}
+                          y2={y2}
+                          stroke="rgba(255, 255, 255, 0.8)"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                      );
+                    })}
+
+                    {/* Center dot */}
+                    <circle
+                      cx="100"
+                      cy="100"
+                      r="4"
+                      fill="rgba(255, 255, 255, 0.9)"
+                    />
+
+                    {/* Hour hand (shorter) - moves smoothly with minutes and seconds */}
+                    <line
+                      x1="100"
+                      y1="100"
+                      x2={
+                        100 +
+                        40 *
+                          Math.cos(
+                            ((currentTime.getHours() % 12) * 30 +
+                              currentTime.getMinutes() * 0.5 +
+                              currentTime.getSeconds() * (0.5 / 60) -
+                              90) *
+                              (Math.PI / 180)
+                          )
+                      }
+                      y2={
+                        100 +
+                        40 *
+                          Math.sin(
+                            ((currentTime.getHours() % 12) * 30 +
+                              currentTime.getMinutes() * 0.5 +
+                              currentTime.getSeconds() * (0.5 / 60) -
+                              90) *
+                              (Math.PI / 180)
+                          )
+                      }
+                      stroke="rgba(255, 255, 255, 0.95)"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+
+                    {/* Minute hand (longer) - moves smoothly with seconds */}
+                    <line
+                      x1="100"
+                      y1="100"
+                      x2={
+                        100 +
+                        60 *
+                          Math.cos(
+                            (currentTime.getMinutes() * 6 +
+                              currentTime.getSeconds() * 0.1 -
+                              90) *
+                              (Math.PI / 180)
+                          )
+                      }
+                      y2={
+                        100 +
+                        60 *
+                          Math.sin(
+                            (currentTime.getMinutes() * 6 +
+                              currentTime.getSeconds() * 0.1 -
+                              90) *
+                              (Math.PI / 180)
+                          )
+                      }
+                      stroke="rgba(255, 255, 255, 0.95)"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Weather Widget - 2x2 */}
+              <div
+                className="col-span-2 row-span-2 rounded-2xl flex flex-col justify-center items-center text-white relative overflow-hidden backdrop-blur-xl p-4 cursor-pointer transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                onClick={() => setShowWeather(true)}
+                style={{
+                  background: `linear-gradient(135deg, rgba(251, 146, 60, 0.85), rgba(234, 179, 8, 0.85))`,
+                  backdropFilter: "blur(20px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                  border: "2px solid transparent",
+                  boxShadow:
+                    "0 8px 32px 0 rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.1)",
+                  alignSelf: "stretch",
+                }}
+              >
+                {weatherData.loading ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-white/60 border-t-transparent rounded-full animate-spin mb-3"></div>
+                    <div className="text-sm opacity-70">Loading...</div>
+                  </div>
+                ) : weatherData.error ? (
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="text-4xl mb-2">🌤️</div>
+                    <div className="text-sm opacity-70">Bergen</div>
+                    <div className="text-xs opacity-50 mt-1">
+                      Unable to load
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col w-full h-full p-3 relative z-10">
+                    {/* Background Weather Icon */}
+                    <div
+                      className="absolute inset-0 flex items-center justify-center z-0"
+                      style={{ opacity: 0.55 }}
+                    >
+                      <div className="text-[200px] drop-shadow-2xl">
+                        {getWeatherIcon(weatherData.condition)}
+                      </div>
+                    </div>
+
+                    {/* Content on top */}
+                    <div className="relative z-10 flex flex-col w-full h-full">
+                      {/* Top row: Location (left) and Temperature (right) */}
+                      <div className="flex justify-between items-start mb-3">
+                        {/* Location - Top Left */}
+                        <div className="flex items-center gap-2">
+                          <GoLocation className="text-black/90 text-2xl" />
+                          <span className="text-xl font-medium text-black opacity-90 drop-shadow-md">
+                            Bergen
+                          </span>
+                        </div>
+                        {/* Temperature - Top Right */}
+                        <div className="text-6xl font-light mt-10 drop-shadow-lg text-white">
+                          {weatherData.temp}°C
+                        </div>
+                      </div>
+
+                      {/* Bottom section: Lowest and Highest */}
+                      <div className="flex-1"></div>
+                      <div className="flex justify-between items-end">
+                        {/* Left side: Lowest */}
+                        <div className="text-lg text-black opacity-80 drop-shadow-sm">
+                          Low: {weatherData.minTemp}°C
+                        </div>
+                        {/* Right side: Highest */}
+                        <div className="text-lg text-black opacity-80 drop-shadow-sm">
+                          High: {weatherData.maxTemp}°C
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Apps - starting from position 3 (after widgets) */}
               {apps.map((app, index) => (
                 <div
                   key={index}

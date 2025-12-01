@@ -4,7 +4,7 @@ import { ImSafari } from "react-icons/im";
 
 const Safari = ({
   onClose,
-  clickPosition,
+  clickPosition: _clickPosition,
 }: {
   onClose: () => void;
   clickPosition: { x: number; y: number };
@@ -16,9 +16,19 @@ const Safari = ({
     const timer = setTimeout(() => {
       setShowLoading(false);
       setShowContent(true);
+      // Dispatch event when content is shown
+      window.dispatchEvent(
+        new CustomEvent("safariContentShown", { detail: { shown: true } })
+      );
     }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Dispatch event when Safari app is closed/unmounted
+      window.dispatchEvent(
+        new CustomEvent("safariAppClosed", { detail: { closed: true } })
+      );
+    };
   }, []);
 
   if (showLoading) {

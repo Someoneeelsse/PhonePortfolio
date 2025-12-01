@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AppsLayout from "./AppsLayout";
-
+import { IoSchoolOutline } from "react-icons/io5";
 interface EducationItem {
   id: number;
   institution: string;
@@ -83,7 +83,9 @@ const Education = ({
               "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
           }}
         >
-          <div className="text-white text-6xl">🎓</div>
+          <div className="text-white text-6xl">
+            <IoSchoolOutline className="text-white text-2xl z-1 w-10 h-10" />
+          </div>
           <div className="text-white text-2xl font-semibold">Education</div>
         </div>
       </div>
@@ -106,7 +108,9 @@ const Education = ({
                   className="w-full bg-white/20 backdrop-blur-md rounded-2xl p-5 border border-white/30 shadow-lg hover:bg-white/25 transition-all duration-200 hover:scale-[1.02] active:scale-95 text-left"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="text-5xl flex-shrink-0">🎓</div>
+                    <div className="text-5xl flex-shrink-0">
+                      <IoSchoolOutline className="text-white text-2xl z-1 w-10 h-10" />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-white font-bold text-lg mb-1">
                         {education.institution}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AppsLayout from "./AppsLayout";
-
+import { LuProjector } from "react-icons/lu";
 const Projects = ({
   onClose,
   clickPosition,
@@ -54,7 +54,9 @@ const Projects = ({
               "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
           }}
         >
-          <div className="text-white text-6xl">📽️</div>
+          <div className="text-white text-6xl">
+            <LuProjector />
+          </div>
           <div className="text-white text-2xl font-semibold">Projects</div>
         </div>
       </div>
@@ -63,12 +65,14 @@ const Projects = ({
 
   if (showContent) {
     return (
-      <AppsLayout onClose={onClose} title="Projects">
+      <AppsLayout onClose={onClose} title="Projects" batteryCharging={false}>
         <div className="h-full flex flex-col bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
           {/* Projects content will be shown in the 3D scene via ProjectsCard */}
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center text-white">
-              <div className="text-4xl mb-4">📽️</div>
+              <div className="text-4xl mb-4 items-center justify-center">
+                <LuProjector />
+              </div>
               <div className="text-2xl font-semibold mb-2">Projects</div>
               <div className="text-gray-400">View projects in the 3D scene</div>
             </div>

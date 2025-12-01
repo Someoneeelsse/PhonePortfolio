@@ -1,4 +1,4 @@
-import { Edges, Html, useGLTF } from "@react-three/drei";
+import { Html, useGLTF } from "@react-three/drei";
 import { useRef, useState, useEffect } from "react";
 import PhoneScreen from "../components/PhoneScreen";
 import type { Object3D } from "three";
@@ -11,7 +11,7 @@ export default function Phone({
   //const phone = useGLTF(
   //  "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/iphone-x/model.gltf"
   //);
-  const phone = useGLTF("public/Iphone.glb");
+  const phone = useGLTF("/Iphone.glb");
 
   const [, setIsHolding] = useState(false);
   const [_, setHoldTime] = useState(0);

@@ -8,7 +8,6 @@ import Phone from "./models/Phone";
 import Subtitles from "./components/Subtitles";
 import { LuArrowBigLeftDash } from "react-icons/lu";
 import Charger from "./models/Charger";
-import { OrbitControls } from "@react-three/drei";
 import ProjectsCard from "./components/ProjectsCard";
 import fireworksVertexShader from "/shaders/fireworks/vertex.glsl?raw";
 import fireworksFragmentShader from "/shaders/fireworks/fragment.glsl?raw";
@@ -33,13 +32,14 @@ function ArrowAnimation({ shouldFadeOut }: { shouldFadeOut: boolean }) {
 
   return (
     <div
-      className={`fixed top-[-100px] right-[-50px] z-[10000] transition-opacity duration-800 ${
+      className={`fixed top-[-110px] right-[-30px] z-[10000] transition-opacity duration-800 ${
         shouldFadeOut ? "opacity-0" : "opacity-100"
       }`}
       style={{
         width: "600px",
         height: "600px",
         transform: "rotate(45deg)",
+        display: shouldFadeOut ? "none" : "block",
       }}
     >
       <svg
@@ -102,6 +102,119 @@ function ArrowAnimation({ shouldFadeOut }: { shouldFadeOut: boolean }) {
           strokeLinejoin="round"
         />
       </svg>
+    </div>
+  );
+}
+
+function StraightArrow() {
+  const shaftRef = useRef<SVGLineElement>(null);
+  const arrowheadRef = useRef<SVGPathElement>(null);
+  const [shaftLength, setShaftLength] = useState(0);
+  const [arrowheadLength, setArrowheadLength] = useState(0);
+
+  useEffect(() => {
+    if (shaftRef.current && arrowheadRef.current) {
+      const x1 = 460;
+      const x2 = 20;
+      const length = Math.abs(x1 - x2);
+      setShaftLength(length);
+
+      const arrowheadLen = arrowheadRef.current.getTotalLength();
+      setArrowheadLength(arrowheadLen);
+    }
+  }, []);
+
+  return (
+    <div
+      style={{
+        width: "500px",
+        height: "80px", // <<--- dramatically reduced
+        position: "relative",
+      }}
+    >
+      <svg
+        width="500px"
+        height="80px" // <<--- also small
+        viewBox="0 0 500 80" // <<--- small vertical viewBox
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <style>
+          {shaftLength > 0 &&
+            arrowheadLength > 0 &&
+            `
+              @keyframes drawShaft {
+                from { stroke-dashoffset: ${shaftLength}; }
+                to   { stroke-dashoffset: 0; }
+              }
+              @keyframes drawArrowhead {
+                from { stroke-dashoffset: ${arrowheadLength}; }
+                to   { stroke-dashoffset: 0; }
+              }
+              .arrow-shaft {
+                stroke-dasharray: ${shaftLength};
+                stroke-dashoffset: ${shaftLength};
+                animation: drawShaft 1.5s ease-out forwards;
+              }
+              .arrow-head {
+                stroke-dasharray: ${arrowheadLength};
+                stroke-dashoffset: ${arrowheadLength};
+                animation: drawArrowhead 0.8s ease-out 1.5s forwards;
+              }
+            `}
+        </style>
+
+        {/* Long left-pointing arrow shaft */}
+        <line
+          ref={shaftRef}
+          className="arrow-shaft"
+          x1="460"
+          y1="40"
+          x2="20"
+          y2="40"
+          stroke="white"
+          strokeOpacity="0.9"
+          strokeWidth="12" // thinner to save height
+          strokeLinecap="round"
+        />
+
+        {/* Arrowhead */}
+        <path
+          ref={arrowheadRef}
+          className="arrow-head"
+          d="M 20 40 L 45 25 M 20 40 L 45 55"
+          stroke="white"
+          strokeOpacity="0.9"
+          strokeWidth="12"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+
+      {/* Text */}
+      <div
+        style={{
+          position: "absolute",
+          right: "40px",
+          top: "10%",
+          transform: "translateY(-50%) rotate(-90deg)",
+          color: "white",
+          fontSize: "16px",
+          fontWeight: "bold",
+          whiteSpace: "nowrap",
+          rotate: "90deg",
+          width: "400px",
+
+          // Make text unselectable:
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+          pointerEvents: "none",
+        }}
+      >
+        Click & drag the charger, connect to phone
+      </div>
     </div>
   );
 }
@@ -438,6 +551,23 @@ export default function Scene({
   const [shouldFadeOutChargeText, setShouldFadeOutChargeText] = useState(false);
   const [showStartButton, setShowStartButton] = useState(false);
   const [_, setShouldFadeOutStartButton] = useState(false);
+  const [showMessagesSubtitle, setShowMessagesSubtitle] = useState(false);
+  const [showNothingSpecialSubtitle, setShowNothingSpecialSubtitle] =
+    useState(false);
+  const [shouldFadeOutMessagesSubtitle, setShouldFadeOutMessagesSubtitle] =
+    useState(false);
+  const [showEmailSubtitle, setShowEmailSubtitle] = useState(false);
+  const [shouldFadeOutEmailSubtitle, setShouldFadeOutEmailSubtitle] =
+    useState(false);
+  const [showSafariSubtitle, setShowSafariSubtitle] = useState(false);
+  const [shouldFadeOutSafariSubtitle, setShouldFadeOutSafariSubtitle] =
+    useState(false);
+  const [showNotesSubtitle, setShowNotesSubtitle] = useState(false);
+  const [shouldFadeOutNotesSubtitle, setShouldFadeOutNotesSubtitle] =
+    useState(false);
+  const [showSnakeSubtitle, setShowSnakeSubtitle] = useState(false);
+  const [shouldFadeOutSnakeSubtitle, setShouldFadeOutSnakeSubtitle] =
+    useState(false);
   const [hasCompletedLoading, setHasCompletedLoading] = useState(false);
   const [isInteractionBlocked, setIsInteractionBlocked] = useState(false);
   const [showBatteryOnReset, setShowBatteryOnReset] = useState(false);
@@ -447,7 +577,6 @@ export default function Scene({
     x: number;
     y: number;
   } | null>(null);
-
   const [background, setBackground] = useState(getOriginalBackground());
   const animRef = useRef<number | null>(null);
   const [shouldMovePhoneToProjects, setShouldMovePhoneToProjects] =
@@ -456,6 +585,49 @@ export default function Scene({
   const [shouldResetToInitial, setShouldResetToInitial] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const isResettingRef = useRef(false);
+  const chargerGroupRef = useRef<THREE.Group>(null);
+
+  const dispatchPhoneScreenVisibility = useCallback((visible: boolean) => {
+    window.dispatchEvent(
+      new CustomEvent("phoneScreenVisibility", { detail: { visible } })
+    );
+  }, []);
+
+  const dispatchChargerConnected = useCallback((connected: boolean) => {
+    window.dispatchEvent(
+      new CustomEvent("chargerConnected", { detail: { connected } })
+    );
+  }, []);
+
+  const animateChargerTo = useCallback(
+    (targetY: number) => {
+      if (chargerGroupRef.current) {
+        gsap.to(chargerGroupRef.current.position, {
+          y: targetY,
+          duration: 0.8,
+          ease: "power2.inOut",
+          onComplete: () => {
+            // Dispatch charger connection status based on Y position
+            // -5.2 is connected (initial position), -6 is disconnected
+            dispatchChargerConnected(targetY === -5.2);
+          },
+        });
+      }
+    },
+    [dispatchChargerConnected]
+  );
+
+  useEffect(() => {
+    dispatchPhoneScreenVisibility(true);
+  }, [dispatchPhoneScreenVisibility]);
+
+  useEffect(() => {
+    if (!shouldMovePhoneToProjects) return;
+    const timeoutId = setTimeout(() => {
+      dispatchPhoneScreenVisibility(false);
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [shouldMovePhoneToProjects, dispatchPhoneScreenVisibility]);
 
   const handlePhoneAnimationComplete = () => {
     setShowStartButton(true);
@@ -752,6 +924,13 @@ export default function Scene({
   // Listen for Projects app click to trigger background change
   useEffect(() => {
     const handleProjectsClick = () => {
+      // Hide bolt immediately when unplugging starts
+      setTimeout(() => {
+        animateChargerTo(-6);
+      }, 400);
+      setTimeout(() => {
+        dispatchChargerConnected(false);
+      }, 500);
       handleBackgroundChange();
     };
 
@@ -785,7 +964,195 @@ export default function Scene({
         handleResetToInitialView
       );
     };
-  }, [handleBackgroundChange, handleBackgroundReset]);
+  }, [
+    handleBackgroundChange,
+    handleBackgroundReset,
+    animateChargerTo,
+    dispatchChargerConnected,
+  ]);
+
+  // Listen for Messages app content shown and closed events
+  useEffect(() => {
+    const handleMessagesContentShown = (event: Event) => {
+      const customEvent = event as CustomEvent<{ shown: boolean }>;
+      if (customEvent.detail.shown) {
+        // Show subtitle after 100ms timeout
+        setTimeout(() => {
+          setShowMessagesSubtitle(true);
+        }, 100);
+      }
+    };
+
+    const handleMessagesAppClosed = (event: Event) => {
+      const customEvent = event as CustomEvent<{ closed: boolean }>;
+      if (customEvent.detail.closed) {
+        // Hide subtitle when app is closed
+        setShouldFadeOutMessagesSubtitle(false);
+        setShowMessagesSubtitle(false);
+        setShowNothingSpecialSubtitle(false);
+      }
+    };
+
+    const handleEmailContentShown = (event: Event) => {
+      const customEvent = event as CustomEvent<{ shown: boolean }>;
+      if (customEvent.detail.shown) {
+        // Show subtitle after 100ms timeout
+        setTimeout(() => {
+          setShowEmailSubtitle(true);
+        }, 100);
+      }
+    };
+
+    const handleEmailAppClosed = (event: Event) => {
+      const customEvent = event as CustomEvent<{ closed: boolean }>;
+      if (customEvent.detail.closed) {
+        // Hide subtitle when app is closed
+        setShouldFadeOutEmailSubtitle(false);
+        setShowEmailSubtitle(false);
+      }
+    };
+
+    const handleSafariContentShown = (event: Event) => {
+      const customEvent = event as CustomEvent<{ shown: boolean }>;
+      if (customEvent.detail.shown) {
+        // Show subtitle after 100ms timeout
+        setTimeout(() => {
+          setShowSafariSubtitle(true);
+        }, 100);
+      }
+    };
+
+    const handleSafariAppClosed = (event: Event) => {
+      const customEvent = event as CustomEvent<{ closed: boolean }>;
+      if (customEvent.detail.closed) {
+        // Hide subtitle when app is closed
+        setShouldFadeOutSafariSubtitle(false);
+        setShowSafariSubtitle(false);
+      }
+    };
+
+    const handleNotesContentShown = (event: Event) => {
+      const customEvent = event as CustomEvent<{ shown: boolean }>;
+      if (customEvent.detail.shown) {
+        // Show subtitle after 100ms timeout
+        setTimeout(() => {
+          setShowNotesSubtitle(true);
+        }, 100);
+      }
+    };
+
+    const handleNotesAppClosed = (event: Event) => {
+      const customEvent = event as CustomEvent<{ closed: boolean }>;
+      if (customEvent.detail.closed) {
+        // Hide subtitle when app is closed
+        setShouldFadeOutNotesSubtitle(false);
+        setShowNotesSubtitle(false);
+      }
+    };
+
+    const handleSnakeContentShown = (event: Event) => {
+      const customEvent = event as CustomEvent<{ shown: boolean }>;
+      if (customEvent.detail.shown) {
+        // Show subtitle after 100ms timeout
+        setTimeout(() => {
+          setShowSnakeSubtitle(true);
+        }, 100);
+      }
+    };
+
+    const handleSnakeAppClosed = (event: Event) => {
+      const customEvent = event as CustomEvent<{ closed: boolean }>;
+      if (customEvent.detail.closed) {
+        // Hide subtitle when app is closed
+        setShouldFadeOutSnakeSubtitle(false);
+        setShowSnakeSubtitle(false);
+      }
+    };
+
+    window.addEventListener(
+      "messagesContentShown",
+      handleMessagesContentShown as EventListener
+    );
+    window.addEventListener(
+      "messagesAppClosed",
+      handleMessagesAppClosed as EventListener
+    );
+    window.addEventListener(
+      "emailContentShown",
+      handleEmailContentShown as EventListener
+    );
+    window.addEventListener(
+      "emailAppClosed",
+      handleEmailAppClosed as EventListener
+    );
+    window.addEventListener(
+      "safariContentShown",
+      handleSafariContentShown as EventListener
+    );
+    window.addEventListener(
+      "safariAppClosed",
+      handleSafariAppClosed as EventListener
+    );
+    window.addEventListener(
+      "notesContentShown",
+      handleNotesContentShown as EventListener
+    );
+    window.addEventListener(
+      "notesAppClosed",
+      handleNotesAppClosed as EventListener
+    );
+    window.addEventListener(
+      "snakeContentShown",
+      handleSnakeContentShown as EventListener
+    );
+    window.addEventListener(
+      "snakeAppClosed",
+      handleSnakeAppClosed as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "messagesContentShown",
+        handleMessagesContentShown as EventListener
+      );
+      window.removeEventListener(
+        "messagesAppClosed",
+        handleMessagesAppClosed as EventListener
+      );
+      window.removeEventListener(
+        "emailContentShown",
+        handleEmailContentShown as EventListener
+      );
+      window.removeEventListener(
+        "emailAppClosed",
+        handleEmailAppClosed as EventListener
+      );
+      window.removeEventListener(
+        "safariContentShown",
+        handleSafariContentShown as EventListener
+      );
+      window.removeEventListener(
+        "safariAppClosed",
+        handleSafariAppClosed as EventListener
+      );
+      window.removeEventListener(
+        "notesContentShown",
+        handleNotesContentShown as EventListener
+      );
+      window.removeEventListener(
+        "notesAppClosed",
+        handleNotesAppClosed as EventListener
+      );
+      window.removeEventListener(
+        "snakeContentShown",
+        handleSnakeContentShown as EventListener
+      );
+      window.removeEventListener(
+        "snakeAppClosed",
+        handleSnakeAppClosed as EventListener
+      );
+    };
+  }, []);
 
   return (
     <div className="relative w-full h-screen font-serif">
@@ -911,50 +1278,31 @@ export default function Scene({
         )}
 
         {/* Show Charger when loading animation is complete */}
-        {isLoadingAnimationComplete && <Charger />}
-
-        {/* Arrow 2 units to the right of Charger */}
         {isLoadingAnimationComplete && (
-          <group position={[2, -3.4, 2.35]} rotation={[0, Math.PI / 1.3, 0.05]}>
-            {/* Arrow shaft - boxy rectangle */}
-            <mesh position={[0, -0.9, 0]}>
-              <boxGeometry args={[0.1, 3.9, 0.1]} />
-              <meshStandardMaterial color="white" />
-            </mesh>
-            {/* Arrowhead - boxy pyramid pointing upward /\ */}
-
-            {/* Left side of arrowhead - forms left side of /\ */}
-            <mesh position={[-0.12, 1.05, 0]} rotation={[0, 0, Math.PI / 4]}>
-              <boxGeometry args={[0.45, 0.15, 0.1]} />
-              <meshStandardMaterial color="white" />
-            </mesh>
-            {/* Right side of arrowhead - forms right side of /\ */}
-            <mesh position={[0.12, 1.05, 0]} rotation={[0, 0, -Math.PI / 4]}>
-              <boxGeometry args={[0.45, 0.15, 0.1]} />
-              <meshStandardMaterial color="white" />
-            </mesh>
-            {/* Text next to arrow */}
-            <Html position={[-0.2, -1.5, 0]} center={true}>
-              <div
-                style={{
-                  color: "white",
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  whiteSpace: "nowrap",
-                  rotate: "78deg",
-                }}
-              >
-                Drag the charger head to phones charging port
-              </div>
-            </Html>
+          <group ref={chargerGroupRef} position={[0.25, -5.2, 2.35]}>
+            <Charger />
           </group>
+        )}
+
+        {/* Straight Arrow 2 units to the right of Charger */}
+        {isLoadingAnimationComplete && (
+          <Html position={[2, -3, 2.35]} center style={{ width: "100px" }}>
+            <div
+              style={{
+                transform: "rotate(78deg)",
+                transformOrigin: "center",
+              }}
+            >
+              <StraightArrow />
+            </div>
+          </Html>
         )}
 
         {/* ProjectsCard - Always render when phone is loaded, but invisible until needed */}
 
         {isLoadingAnimationComplete && (
           <MemoizedProjectsCard
-            position={[-0.9, 1.25, 2]}
+            position={[-0.6, 1.25, 1.98]}
             rotation={[0, Math.PI / 4, 0]}
             color="#70c1ff"
             width={2.5}
@@ -987,13 +1335,17 @@ export default function Scene({
                 setShouldResetToInitial(true);
               }, 200);
             });
+            setTimeout(() => {
+              dispatchPhoneScreenVisibility(true);
+            }, 5370);
+            setTimeout(() => {
+              animateChargerTo(-5.2); // Move charger back to initial position
+            }, 7000);
           }}
-          className="fixed top-4 left
--4 z-[10001] bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all hover:scale-105"
+          className="fixed top-5 left-90 z-[10001] bg-white/90 hover:bg-white text-gray-800 px-2 py-2 rounded-lg shadow-lg flex items-center transition-all hover:scale-105"
           style={{ backdropFilter: "blur(10px)" }}
         >
           <LuArrowBigLeftDash className="text-2xl" />
-          <span className="text-lg font-medium">Back to Initial View</span>
         </button>
       )}
 
@@ -1257,6 +1609,137 @@ export default function Scene({
             showButton={true}
           />
         </div>
+      )}
+
+      {/* Messages app subtitle */}
+      {showMessagesSubtitle && (
+        <>
+          <Subtitles
+            text="We can skip the messages checking on this phone"
+            className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"
+            showNextButton={false}
+            characterWidthParam={9.5}
+            showButton={false}
+            shouldFadeOut={shouldFadeOutMessagesSubtitle}
+            onAnimationComplete={() => {
+              setTimeout(() => {
+                setShowNothingSpecialSubtitle(true);
+              }, 650);
+            }}
+          />
+          {showNothingSpecialSubtitle && (
+            <Subtitles
+              text="Nothing special here..."
+              className="top-65 left-308 -translate-x-1/2 max-w-[900px]"
+              showNextButton={false}
+              characterWidthParam={9.5}
+              showButton={false}
+              shouldFadeOut={shouldFadeOutMessagesSubtitle}
+              onAnimationComplete={() => {
+                setTimeout(() => {
+                  setShouldFadeOutMessagesSubtitle(true);
+                  setTimeout(() => {
+                    setShowMessagesSubtitle(false);
+                    setShowNothingSpecialSubtitle(false);
+                    setShouldFadeOutMessagesSubtitle(false);
+                  }, 700);
+                }, 300);
+              }}
+            />
+          )}
+        </>
+      )}
+
+      {/* Email app subtitle */}
+      {showEmailSubtitle && (
+        <Subtitles
+          text="You can send me an email from here"
+          className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"
+          showNextButton={false}
+          characterWidthParam={9.5}
+          showButton={false}
+          shouldFadeOut={shouldFadeOutEmailSubtitle}
+          onAnimationComplete={() => {
+            // Wait 200ms after animation completes, then fade out
+            setTimeout(() => {
+              setShouldFadeOutEmailSubtitle(true);
+              // Hide subtitle after fade out animation completes
+              setTimeout(() => {
+                setShowEmailSubtitle(false);
+                setShouldFadeOutEmailSubtitle(false);
+              }, 700);
+            }, 200);
+          }}
+        />
+      )}
+
+      {/* Safari app subtitle */}
+      {showSafariSubtitle && (
+        <Subtitles
+          text="Well that is awkward"
+          className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"
+          showNextButton={false}
+          characterWidthParam={9.5}
+          showButton={false}
+          shouldFadeOut={shouldFadeOutSafariSubtitle}
+          onAnimationComplete={() => {
+            // Wait 200ms after animation completes, then fade out
+            setTimeout(() => {
+              setShouldFadeOutSafariSubtitle(true);
+              // Hide subtitle after fade out animation completes
+              setTimeout(() => {
+                setShowSafariSubtitle(false);
+                setShouldFadeOutSafariSubtitle(false);
+              }, 700);
+            }, 200);
+          }}
+        />
+      )}
+
+      {/* Notes app subtitle */}
+      {showNotesSubtitle && (
+        <Subtitles
+          text="The only TODO app I would ever make..."
+          className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"
+          showNextButton={false}
+          characterWidthParam={9.5}
+          showButton={false}
+          shouldFadeOut={shouldFadeOutNotesSubtitle}
+          onAnimationComplete={() => {
+            // Wait 200ms after animation completes, then fade out
+            setTimeout(() => {
+              setShouldFadeOutNotesSubtitle(true);
+              // Hide subtitle after fade out animation completes
+              setTimeout(() => {
+                setShowNotesSubtitle(false);
+                setShouldFadeOutNotesSubtitle(false);
+              }, 700);
+            }, 200);
+          }}
+        />
+      )}
+
+      {/* Snake app subtitle */}
+      {showSnakeSubtitle && (
+        <Subtitles
+          text="I have spend to much time on this; Playing..."
+          className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"
+          showNextButton={false}
+          characterWidthParam={9.5}
+          showButton={false}
+          shouldFadeOut={shouldFadeOutSnakeSubtitle}
+          onAnimationComplete={() => {
+            // Wait 200ms after animation completes, then fade out
+            setTimeout(() => {
+              setShouldFadeOutSnakeSubtitle(true);
+              // Hide subtitle after fade out animation completes
+              setTimeout(() => {
+                setShowSnakeSubtitle(false);
+                setShouldFadeOutSnakeSubtitle(false);
+              }, 700);
+            }, 200);
+          }}
+        />
       )}
     </div>
   );

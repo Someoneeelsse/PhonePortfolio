@@ -81,10 +81,18 @@ const Notes = ({
     const timer = setTimeout(() => {
       setShowLoading(false);
       setShowContent(true);
+      // Dispatch event when content is shown
+      window.dispatchEvent(
+        new CustomEvent("notesContentShown", { detail: { shown: true } })
+      );
     }, 1500);
 
     return () => {
       clearTimeout(timer);
+      // Dispatch event when Notes app is closed/unmounted
+      window.dispatchEvent(
+        new CustomEvent("notesAppClosed", { detail: { closed: true } })
+      );
       // Clean up save timeout on unmount
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);

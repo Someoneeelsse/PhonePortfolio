@@ -24,7 +24,7 @@ interface Conversation {
 
 const Messages = ({
   onClose,
-  clickPosition,
+  clickPosition: _clickPosition,
 }: {
   onClose: () => void;
   clickPosition: { x: number; y: number };
@@ -39,9 +39,19 @@ const Messages = ({
     const timer = setTimeout(() => {
       setShowLoading(false);
       setShowContent(true);
+      // Dispatch event when content is shown
+      window.dispatchEvent(
+        new CustomEvent("messagesContentShown", { detail: { shown: true } })
+      );
     }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Dispatch event when Messages app is closed/unmounted
+      window.dispatchEvent(
+        new CustomEvent("messagesAppClosed", { detail: { closed: true } })
+      );
+    };
   }, []);
 
   const conversations = messagesData.conversations;

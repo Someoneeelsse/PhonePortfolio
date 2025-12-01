@@ -9,6 +9,7 @@ interface AppsLayoutProps {
   textColor?: string;
   statusBarTextColor?: string; // Color for time and status bar elements
   batteryColorScheme?: "light" | "dark"; // "light" for light backgrounds, "dark" for dark backgrounds
+  batteryCharging?: boolean;
 }
 
 const AppsLayout = ({
@@ -18,6 +19,7 @@ const AppsLayout = ({
   textColor = "text-gray-700",
   statusBarTextColor = "text-white", // Default to white for dark backgrounds
   batteryColorScheme = "dark", // Default to dark (white border, black fill) for dark backgrounds
+  batteryCharging = true,
 }: AppsLayoutProps) => {
   // Determine battery colors based on scheme
   const batteryBorderColor =
@@ -67,9 +69,11 @@ const AppsLayout = ({
                 <div className="absolute left-[2px] top-[2px] bottom-[2px] w-[50%] bg-green-400 rounded-l-sm transition-all duration-700"></div>
 
                 {/* Thunderbolt (lightning bolt) */}
-                <MdBolt
-                  className={`${batteryThunderboltColor} text-2xl z-1 w-5 h-5`}
-                />
+                {batteryCharging && (
+                  <MdBolt
+                    className={`${batteryThunderboltColor} text-2xl z-1 w-5 h-5`}
+                  />
+                )}
               </div>
 
               {/* Battery tip */}

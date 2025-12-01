@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import AppsLayout from "./AppsLayout";
+import { MdOutlineWorkHistory } from "react-icons/md";
 
 interface WorkExperience {
   id: number;
@@ -182,7 +183,9 @@ const Job = ({
               "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
           }}
         >
-          <div className="text-white text-6xl">💼</div>
+          <div className="text-white text-6xl">
+            <MdOutlineWorkHistory className="text-white text-2xl z-1 w-10 h-10" />
+          </div>
           <div className="text-white text-2xl font-semibold">Job</div>
         </div>
       </div>

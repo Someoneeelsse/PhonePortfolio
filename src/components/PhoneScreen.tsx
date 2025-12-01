@@ -11,6 +11,7 @@ const PhoneScreen = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [lockscreenOffset, setLockscreenOffset] = useState(0);
   const [_, setShowMainScreen] = useState(false);
+  const [isPhoneScreenVisible, setIsPhoneScreenVisible] = useState(true);
   const dragRef = useRef<HTMLDivElement>(null);
   const startYRef = useRef(0);
   const currentYRef = useRef(0);
@@ -63,6 +64,16 @@ const PhoneScreen = () => {
   ]);
 
   // Update time every second
+  useEffect(() => {
+    const handleVisibilityChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ visible: boolean }>;
+      setIsPhoneScreenVisible(customEvent.detail.visible);
+    };
+    window.addEventListener("phoneScreenVisibility", handleVisibilityChange);
+    return () => {
+      window.removeEventListener("phoneScreenVisibility", handleVisibilityChange);
+    };
+  }, []);
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -229,6 +240,9 @@ const PhoneScreen = () => {
           "polygon(0% 0%, 22% 0%, 22.7% 3px, 23.5% 31px, 23.7% 33px, 24.2% 37px, 24.9% 41px, 25.8% 43.2px, 26.2% 44px,    72.8% 44px,  73.2% 43.2px,  74.1% 41px,  74.8% 37px, 75.3% 33px,  75.5% 31px, 76.3% 3px, 77% 0%, 100% 0%, 100% 100%, 0% 100%  )",
         // Ensure PhoneScreen is always visible on top
         zIndex: 1000,
+        opacity: isPhoneScreenVisible ? 1 : 0,
+        transition: "opacity 0.4s ease",
+        pointerEvents: isPhoneScreenVisible ? "auto" : "none",
       }}
     >
       {/* Background layer that can fade independently */}

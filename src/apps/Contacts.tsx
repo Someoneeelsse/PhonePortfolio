@@ -4,7 +4,7 @@ import AppsLayout from "./AppsLayout";
 
 const Contacts = ({
   onClose,
-  clickPosition,
+  clickPosition: _clickPosition,
 }: {
   onClose: () => void;
   clickPosition: { x: number; y: number };

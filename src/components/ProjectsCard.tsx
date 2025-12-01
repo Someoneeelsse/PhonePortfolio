@@ -500,7 +500,65 @@ export default function ProjectsCard({
           );
         })}
       </group>
+      {visible && (
+        <group
+          rotation={[
+            THREE.MathUtils.degToRad(45),
+            THREE.MathUtils.degToRad(-30),
+            THREE.MathUtils.degToRad(15),
+          ]}
+        >
+          <Html
+            position={[0.6, -height / 2 - 1, depth / 2 + 0.01]}
+            center
+            style={{ pointerEvents: "none" }}
+          >
+            <div
+              style={{
+                width: "600px",
+                height: "600px",
+                transform: `
+      rotateX(65deg)
+      rotateY(180deg)
+      rotateZ(330deg)
+      rotate(180deg)
+    `,
+                transformStyle: "preserve-3d",
+              }}
+            >
+              <svg
+                width="550px"
+                height="550px"
+                viewBox="0 0 400 400"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Circular Arc 70% line, 30% gap */}
+                <circle
+                  cx="200"
+                  cy="200"
+                  r="84"
+                  stroke="white"
+                  strokeWidth="16"
+                  strokeLinecap="round"
+                  fill="none"
+                  strokeDasharray="370 158" // 70% visible, 30% gap
+                  transform="rotate(-45 200 200)" // rotate so the gap is positioned nicely
+                />
 
+                {/* Arrowhead at the end */}
+                <path
+                  d="M 264 128 L 256 148 M 264 128 L 282 142"
+                  stroke="white"
+                  strokeWidth="16"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </Html>
+        </group>
+      )}
       {/* Fixed Blue Dot */}
       <mesh
         position={[
@@ -522,7 +580,7 @@ export default function ProjectsCard({
 
       {/* Information Box - only show when visible */}
       {visible && (
-        <Html position={[width + 3.5, 0, 0]} center>
+        <Html position={[width + 10.5, -1, 0]} center>
           <div
             ref={infoBoxRef}
             className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-md border border-cyan-400/40 rounded-xl p-8 w-96 text-white shadow-2xl"

@@ -24,6 +24,9 @@ export default function LoadingScreen({
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
   const [shouldStartFromThreshold, setShouldStartFromThreshold] =
     useState(false);
+  const [isChargerConnected, setIsChargerConnected] = useState(true);
+  const [hasInitialAnimationPlayed, setHasInitialAnimationPlayed] =
+    useState(false);
   const loadingBarRef = useRef<HTMLDivElement>(null);
   const nameTextRef = useRef<HTMLDivElement>(null);
   const socialMediaRef = useRef<HTMLDivElement>(null);
@@ -110,6 +113,26 @@ export default function LoadingScreen({
     }
   }, [isCompleted]);
 
+  // Listen for charger connection status
+  useEffect(() => {
+    const handleChargerConnected = (event: Event) => {
+      const customEvent = event as CustomEvent<{ connected: boolean }>;
+      setIsChargerConnected(customEvent.detail.connected);
+    };
+
+    window.addEventListener(
+      "chargerConnected",
+      handleChargerConnected as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "chargerConnected",
+        handleChargerConnected as EventListener
+      );
+    };
+  }, []);
+
   // Effect to animate loading bar when name appears
   useEffect(() => {
     if (showName && loadingBarRef.current && nameTextRef.current) {
@@ -135,6 +158,10 @@ export default function LoadingScreen({
             setIsAnimationComplete(true);
             // Show social media text when "Someoneelsse" animation completes
             setShowSocialMedia(true);
+            // Mark initial animation as played after fade-in completes (1 second)
+            setTimeout(() => {
+              setHasInitialAnimationPlayed(true);
+            }, 1000);
             // Call the callback when animation completes
             onLoadingAnimationComplete?.();
           },
@@ -278,11 +305,16 @@ export default function LoadingScreen({
 
               rotate: "270deg",
               color: "white",
+              transform: hasInitialAnimationPlayed
+                ? "translateY(-50%)"
+                : undefined,
               fontSize: "20px",
               fontWeight: "300",
               textAlign: "left",
 
-              animation: "fadeInSocialMedia 1s ease-in forwards",
+              animation: hasInitialAnimationPlayed
+                ? "none"
+                : "fadeInSocialMedia 1s ease-in forwards",
               userSelect: "none",
               WebkitUserSelect: "none",
               MozUserSelect: "none",
@@ -291,8 +323,12 @@ export default function LoadingScreen({
               flexDirection: "column",
               gap: "90px",
               zIndex: 2000,
-              pointerEvents: "auto",
+              pointerEvents: isChargerConnected ? "auto" : "none",
               marginBottom: "-65px",
+              opacity: isChargerConnected ? 1 : 0,
+              transition: hasInitialAnimationPlayed
+                ? "opacity 0.5s ease-in-out"
+                : "none",
             }}
           >
             <a

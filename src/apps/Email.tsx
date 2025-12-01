@@ -10,7 +10,7 @@ import emailsData from "../data/emails.json";
 
 const Email = ({
   onClose,
-  clickPosition,
+  clickPosition: _clickPosition,
 }: {
   onClose: () => void;
   clickPosition: { x: number; y: number };
@@ -31,9 +31,19 @@ const Email = ({
     const timer = setTimeout(() => {
       setShowLoading(false);
       setShowContent(true);
+      // Dispatch event when content is shown
+      window.dispatchEvent(
+        new CustomEvent("emailContentShown", { detail: { shown: true } })
+      );
     }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Dispatch event when Email app is closed/unmounted
+      window.dispatchEvent(
+        new CustomEvent("emailAppClosed", { detail: { closed: true } })
+      );
+    };
   }, []);
 
   const emails = emailsData.emails;

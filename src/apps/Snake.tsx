@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { MdVideogameAsset } from "react-icons/md";
+
 import AppsLayout from "./AppsLayout";
+import { VscSnake } from "react-icons/vsc";
 
 const CELL_SIZE = 15; // Fixed 10px x 10px cells
 const GRID_WIDTH = 38; // Number of cells horizontally
@@ -45,9 +46,19 @@ const Snake = ({
     const timer = setTimeout(() => {
       setShowLoading(false);
       setShowContent(true);
+      // Dispatch event when content is shown
+      window.dispatchEvent(
+        new CustomEvent("snakeContentShown", { detail: { shown: true } })
+      );
     }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      // Dispatch event when Snake app is closed/unmounted
+      window.dispatchEvent(
+        new CustomEvent("snakeAppClosed", { detail: { closed: true } })
+      );
+    };
   }, []);
 
   // Load high score from localStorage on mount
@@ -391,7 +402,7 @@ const Snake = ({
               "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
           }}
         >
-          <MdVideogameAsset className="text-white text-6xl" />
+          <VscSnake className="text-white text-6xl" />
           <div className="text-white text-2xl font-semibold">Snake</div>
         </div>
       </div>
@@ -414,14 +425,14 @@ const Snake = ({
                   onClick={() => handleStartGame("keyboard")}
                   className="px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-medium"
                 >
-                  ⌨️ Keyboard (Arrows / WASD)
+                  Keyboard (Arrows / WASD)
                 </button>
 
                 <button
                   onClick={() => handleStartGame("touch")}
                   className="px-6 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
                 >
-                  👆 Touch / Mouse Swipe
+                  Touch / Mouse Swipe
                 </button>
               </div>
             </div>
@@ -555,15 +566,6 @@ const Snake = ({
                   <div className="text-white text-2xl font-bold">Paused</div>
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Instructions */}
-          <div className="px-4 py-3 bg-gray-900 border-t border-gray-800">
-            <div className="text-gray-400 text-xs text-center">
-              {controlMode === "keyboard"
-                ? "Use Arrow Keys / WASD to move • Space to pause"
-                : "Swipe in any direction to move the snake"}
             </div>
           </div>
         </div>
