@@ -5,7 +5,7 @@ import AppsLayout from "./AppsLayout";
 
 const Calculator = ({
   onClose,
-  clickPosition,
+  clickPosition: _clickPosition,
 }: {
   onClose: () => void;
   clickPosition: { x: number; y: number };
@@ -33,24 +33,16 @@ const Calculator = ({
     // Add button to history
     setEquationHistory((prev) => [...prev, num]);
 
-    if (waitingForOperand) {
+    if (waitingForOperand && operation) {
+      // Start a new number after an operation (not after equals)
       setDisplay(num);
       setWaitingForOperand(false);
       // Add the number to the equation
       setEquation(equation + num);
-
-      // If we have a previous operation, calculate the result immediately
-      if (previousValue !== null && operation) {
-        const inputValue = parseFloat(num);
-        const newValue = calculate(previousValue, inputValue, operation);
-        setDisplay(String(newValue));
-        setPreviousValue(newValue);
-        setOperation(null);
-        setWaitingForOperand(true);
-        // Don't update equation here - keep the full equation visible
-      }
     } else {
+      // Append to current number (normal typing or after equals)
       setDisplay(display === "0" ? num : display + num);
+      setWaitingForOperand(false);
       // If this is the first number, start the equation
       if (equation === "") {
         setEquation(num);
@@ -90,17 +82,18 @@ const Calculator = ({
 
     const inputValue = parseFloat(display);
 
-    if (previousValue === null) {
-      setPreviousValue(inputValue);
-      setEquation(display + nextOperation);
-    } else if (operation) {
-      const currentValue = previousValue || 0;
-      const newValue = calculate(currentValue, inputValue, operation);
-
+    // If there's already an operation pending, calculate it first (chaining operations)
+    if (previousValue !== null && operation && !waitingForOperand) {
+      const newValue = calculate(previousValue, inputValue, operation);
       setDisplay(String(newValue));
       setPreviousValue(newValue);
       setEquation(String(newValue) + nextOperation);
+    } else if (previousValue === null) {
+      // First operation - just store the value
+      setPreviousValue(inputValue);
+      setEquation(display + nextOperation);
     } else {
+      // Just update the equation with the new operation
       setEquation(equation + nextOperation);
     }
 
@@ -136,8 +129,9 @@ const Calculator = ({
     if (previousValue !== null && operation) {
       const newValue = calculate(previousValue, inputValue, operation);
       setDisplay(String(newValue));
-      setPreviousValue(null);
-      setOperation(null);
+      // Store result for potential chaining, but clear operation so typing appends
+      setPreviousValue(newValue);
+      setOperation(null); // Clear operation so numbers append after equals
       setWaitingForOperand(true);
       setEquation(String(newValue));
       // Clear history after equals
@@ -166,11 +160,11 @@ const Calculator = ({
     return (
       <div className="w-151 h-321.5 rounded-[71px] relative flex items-center justify-center overflow-hidden bg-gray-700">
         <div
-          className="flex flex-col items-center space-y-4"
+          className="flex flex-col items-center space-y-4 animate-fadeInFromCenter"
           style={{
-            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            transformOrigin: "50% 100%",
             animation:
-              "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+              "appOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
           }}
         >
           <FaCalculator className="text-white text-6xl" />

@@ -190,14 +190,40 @@ const PhoneMainScreen = () => {
           throw new Error("Invalid API response");
         }
 
-        // Get current weather (first timeseries entry)
-        const currentItem = data.properties.timeseries[0];
-        const temp = Math.round(
-          currentItem.data.instant.details.air_temperature
+        // Group timeseries by day (same logic as Weather.tsx)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        // Get all items for today
+        const todayItems = data.properties.timeseries.filter((item: any) => {
+          const itemDate = new Date(item.time);
+          return itemDate >= today && itemDate < tomorrow;
+        });
+
+        if (todayItems.length === 0) {
+          throw new Error("No weather data for today");
+        }
+
+        // Use the middle interval of the day (around noon) as representative (same as Weather.tsx)
+        const representativeItem =
+          todayItems[Math.floor(todayItems.length / 2)] || todayItems[0];
+
+        // Calculate average temp from all intervals for today (same as Weather.tsx)
+        const temps = todayItems.map(
+          (item: any) => item.data.instant.details.air_temperature
         );
+        const avgTemp =
+          temps.reduce((sum: number, temp: number) => sum + temp, 0) /
+          temps.length;
+        const temp = Math.round(avgTemp);
+
+        // Get weather condition from symbol code (same as Weather.tsx)
         const symbolCode =
-          currentItem.data.next_6_hours?.summary?.symbol_code ||
-          currentItem.data.next_1_hours?.summary?.symbol_code ||
+          representativeItem.data.next_6_hours?.summary?.symbol_code ||
+          representativeItem.data.next_1_hours?.summary?.symbol_code ||
+          representativeItem.data.next_12_hours?.summary?.symbol_code ||
           "clearsky_day";
 
         const condition = symbolCode.replace(/_day|_night|_polartwilight/g, "");
@@ -208,23 +234,8 @@ const PhoneMainScreen = () => {
           .join(" ");
 
         // Calculate min/max temperatures for today
-        // Get all temperatures for today (next 24 hours)
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-
-        const todayTemps = data.properties.timeseries
-          .filter((item: any) => {
-            const itemDate = new Date(item.time);
-            return itemDate >= today && itemDate < tomorrow;
-          })
-          .map((item: any) => item.data.instant.details.air_temperature);
-
-        const minTemp =
-          todayTemps.length > 0 ? Math.round(Math.min(...todayTemps)) : temp;
-        const maxTemp =
-          todayTemps.length > 0 ? Math.round(Math.max(...todayTemps)) : temp;
+        const minTemp = Math.round(Math.min(...temps));
+        const maxTemp = Math.round(Math.max(...temps));
 
         setWeatherData({
           temp,
@@ -823,7 +834,7 @@ const PhoneMainScreen = () => {
 
               {/* Weather Widget - 2x2 */}
               <div
-                className="col-span-2 row-span-2 rounded-2xl flex flex-col justify-center items-center text-white relative overflow-hidden backdrop-blur-xl p-4 cursor-pointer transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                className="col-span-2 row-span-2 rounded-2xl flex flex-col justify-center items-center text-white relative overflow-hidden backdrop-blur-xl p-4 cursor-pointer group"
                 onClick={() => setShowWeather(true)}
                 style={{
                   background: `linear-gradient(135deg, rgba(251, 146, 60, 0.85), rgba(234, 179, 8, 0.85))`,
@@ -835,6 +846,34 @@ const PhoneMainScreen = () => {
                   alignSelf: "stretch",
                 }}
               >
+                {/* Animated glow sweep on hover */}
+                <div
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `linear-gradient(
+                      135deg,
+                      transparent 0%,
+                      transparent 30%,
+                      rgba(255, 255, 255, 0.3) 50%,
+                      transparent 70%,
+                      transparent 100%
+                    )`,
+                    backgroundSize: "200% 200%",
+                    backgroundPosition: "-100% -100%",
+                    animation: "glow-sweep 1.5s ease-in-out",
+                  }}
+                />
+                {/* Secondary glow for depth */}
+                <div
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(
+                      circle at 30% 30%,
+                      rgba(255, 255, 255, 0.4) 0%,
+                      transparent 50%
+                    )`,
+                  }}
+                />
                 {weatherData.loading ? (
                   <div className="flex flex-col items-center justify-center">
                     <div className="w-8 h-8 border-2 border-white/60 border-t-transparent rounded-full animate-spin mb-3"></div>

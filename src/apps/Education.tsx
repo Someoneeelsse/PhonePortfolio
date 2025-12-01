@@ -15,7 +15,7 @@ interface EducationItem {
 
 const Education = ({
   onClose,
-  clickPosition,
+  clickPosition: _clickPosition,
 }: {
   onClose: () => void;
   clickPosition: { x: number; y: number };
@@ -76,16 +76,14 @@ const Education = ({
     return (
       <div className="w-151 h-321.5 rounded-[71px] relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600">
         <div
-          className="flex flex-col items-center space-y-4"
+          className="flex flex-col items-center space-y-4 animate-fadeInFromCenter"
           style={{
-            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            transformOrigin: "50% 100%",
             animation:
-              "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+              "appOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
           }}
         >
-          <div className="text-white text-6xl">
-            <IoSchoolOutline className="text-white text-2xl z-1 w-10 h-10" />
-          </div>
+          <IoSchoolOutline className="text-white text-6xl" />
           <div className="text-white text-2xl font-semibold">Education</div>
         </div>
       </div>

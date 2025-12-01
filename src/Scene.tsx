@@ -1339,6 +1339,14 @@ export default function Scene({
               dispatchPhoneScreenVisibility(true);
             }, 5370);
             setTimeout(() => {
+              // Play iPhone charging sound
+              const chargingSound = new Audio("/audio/IphoneChargingSound.mp3");
+              chargingSound.volume = 0.5; // Set volume to 50%
+              chargingSound.play().catch((error) => {
+                console.error("Error playing charging sound:", error);
+              });
+            }, 6000);
+            setTimeout(() => {
               animateChargerTo(-5.2); // Move charger back to initial position
             }, 7000);
           }}

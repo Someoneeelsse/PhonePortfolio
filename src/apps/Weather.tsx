@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AppsLayout from "./AppsLayout";
+import { TiWeatherPartlySunny } from "react-icons/ti";
 
 interface WeatherData {
   date: string;
@@ -84,7 +85,7 @@ const getWeatherIcon = (condition: string) => {
 
 const Weather = ({
   onClose,
-  clickPosition,
+  clickPosition: _clickPosition,
 }: {
   onClose: () => void;
   clickPosition: { x: number; y: number };
@@ -327,14 +328,14 @@ const Weather = ({
     return (
       <div className="w-151 h-321.5 rounded-[71px] relative flex items-center justify-center overflow-hidden bg-orange-500">
         <div
-          className="flex flex-col items-center space-y-4"
+          className="flex flex-col items-center space-y-4 animate-fadeInFromCenter"
           style={{
-            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            transformOrigin: "50% 100%",
             animation:
-              "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+              "appOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
           }}
         >
-          <div className="text-white text-6xl">☀️</div>
+          <TiWeatherPartlySunny className="text-white text-6xl" />
           <div className="text-white text-2xl font-semibold">Weather</div>
         </div>
       </div>
@@ -376,20 +377,15 @@ const Weather = ({
       const gradient = getGradient(todayForecast?.condition || "");
 
       return (
-        <AppsLayout onClose={onClose} title={selectedCity || "Weather"}>
+        <AppsLayout
+          onClose={() => setSelectedCity(null)}
+          title={selectedCity || "Weather"}
+        >
           <div
             className={`h-full flex flex-col bg-gradient-to-b ${gradient} pt-30`}
           >
             {/* Header Section */}
             <div className="px-4 pt-6 pb-4">
-              <button
-                onClick={() => setSelectedCity(null)}
-                className="flex items-center gap-2 text-white/90 hover:text-white transition-colors mb-4"
-              >
-                <span className="text-xl font-bold">←</span>
-                <span className="text-sm font-medium">Back</span>
-              </button>
-
               {todayForecast && (
                 <div className="text-center text-white mb-2">
                   <div className="text-7xl mb-2">

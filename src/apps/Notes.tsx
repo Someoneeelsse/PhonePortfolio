@@ -13,7 +13,7 @@ interface Note {
 
 const Notes = ({
   onClose,
-  clickPosition,
+  clickPosition: _clickPosition,
 }: {
   onClose: () => void;
   clickPosition: { x: number; y: number };
@@ -174,11 +174,11 @@ const Notes = ({
     return (
       <div className="w-151 h-321.5 rounded-[71px] relative flex items-center justify-center overflow-hidden bg-yellow-400">
         <div
-          className="flex flex-col items-center space-y-4"
+          className="flex flex-col items-center space-y-4 animate-fadeInFromCenter"
           style={{
-            transformOrigin: `${clickPosition.x}px ${clickPosition.y}px`,
+            transformOrigin: "50% 100%",
             animation:
-              "iosAppOpen 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+              "appOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
           }}
         >
           <MdNotes className="text-white text-6xl" />
@@ -192,7 +192,13 @@ const Notes = ({
     // Show note editor if a note is selected
     if (selectedNote) {
       return (
-        <AppsLayout onClose={onClose} title="Notes" textColor="text-gray-200" statusBarTextColor="text-black" batteryColorScheme="light">
+        <AppsLayout
+          onClose={() => setSelectedNote(null)}
+          title="Notes"
+          textColor="text-gray-200"
+          statusBarTextColor="text-black"
+          batteryColorScheme="light"
+        >
           <div className="h-full flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 pt-30">
             {/* Note Editor */}
             <div className="flex-1 flex flex-col bg-gradient-to-b from-amber-50 to-yellow-50 overflow-hidden relative z-10">
