@@ -95,35 +95,37 @@ const Education = ({
     return (
       <AppsLayout onClose={onClose} title="Education">
         <div className="h-full flex flex-col bg-gradient-to-b from-purple-500 via-indigo-600 to-blue-700 pt-30">
-          <div className="flex-1 overflow-y-auto px-4 py-4">
-            <div className="space-y-3">
+          <div className="flex-1 overflow-y-auto px-5 py-5">
+            <div className="space-y-4">
               {educationData.map((education) => (
                 <button
                   key={education.id}
                   onClick={() => {
                     window.open(education.url, "_blank", "noopener,noreferrer");
                   }}
-                  className="w-full bg-white/20 backdrop-blur-md rounded-2xl p-5 border border-white/30 shadow-lg hover:bg-white/25 transition-all duration-200 hover:scale-[1.02] active:scale-95 text-left"
+                  className="w-full bg-white/20 backdrop-blur-md rounded-2xl p-7 border border-white/30 shadow-lg hover:bg-white/25 transition-all duration-200 hover:scale-[1.02] active:scale-95 text-left"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="text-5xl flex-shrink-0">
-                      <IoSchoolOutline className="text-white text-2xl z-1 w-10 h-10" />
+                  <div className="flex items-start gap-5">
+                    <div className="flex-shrink-0">
+                      <IoSchoolOutline className="text-white z-1 w-12 h-12" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-white font-bold text-lg mb-1">
+                      <div className="text-white font-bold text-2xl mb-2 leading-tight">
                         {education.institution}
                       </div>
-                      <div className="text-white/90 text-base font-semibold mb-1">
+                      <div className="text-white/90 text-xl font-semibold mb-4 leading-tight">
                         {education.degree}
                       </div>
-                      <div className="text-white/80 text-sm mb-2">
+                      <div className="text-white/80 text-xl mb-1 leading-tight">
                         {education.field}
                       </div>
-                      <div className="text-white/70 text-xs">
+                      <div className="text-white/90 text-xl font-medium">
                         {education.period}
                       </div>
                     </div>
-                    <div className="text-white/60 text-xl flex-shrink-0">→</div>
+                    <div className="text-white/60 text-2xl flex-shrink-0">
+                      →
+                    </div>
                   </div>
                 </button>
               ))}

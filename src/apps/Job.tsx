@@ -148,27 +148,55 @@ const Job = ({
       year: "2020 - Present",
       position: "Web & Software Developer",
       responsibilities: [
-        "Developing and maintaining web applications",
-        "Creating and maintaining software applications",
-        "Providing technical support to clients",
+        "Developing and maintaining full-stack web applications",
+        "Containerizing and deploying applications using Docker and CI/CD",
+        "Managing client hosting, servers, and automated testing",
+        "Creating chatbots, recentely developing MCP servers",
       ],
-      learned: ["React", "Pandas", "FastAPI", "Docker"],
+      learned: [
+        "React",
+        "FastAPI",
+        "Pandas & Torch",
+        "Docker",
+        "Github Actions",
+        "MCP Servers",
+      ],
     },
     {
       id: 2,
       title: "Nordomatic AD",
       year: "2022 - 2025",
-      position: "Web & Software Developer",
-      responsibilities: ["Responsibility 1", "Responsibility 2"],
-      learned: ["Skill 1", "Skill 2"],
+      position: "Software Developer / System Engineer",
+      responsibilities: [
+        "Building and maintaining ICS automation solutions",
+        "Developing internal automation tools and system integrations",
+      ],
+      learned: [
+        "Java (Native Java)",
+        "Typescript (React Applicationsa)",
+        "Python (Creating Tools using Pandas)",
+        "Niagara",
+        "PLC",
+      ],
     },
     {
       id: 3,
-      title: "Bergen Byggautomation ",
-      year: "2024 - 2025",
-      position: "Web & Software Developer",
-      responsibilities: ["Responsibility 1", "Responsibility 2"],
-      learned: ["Skill 1", "Skill 2"],
+      title: "Bergen Byggautomation",
+      year: "2024 - Present",
+      position: "System Developer & Engineer",
+      responsibilities: [
+        "Developing productivity tools and automation pipelines",
+        "Managing Azure cloud services and containerized deployments",
+        "Implementing monitoring, logging, and integration workflows",
+      ],
+      learned: [
+        "Azure",
+        "Docker",
+        "Git",
+        "Niagara",
+        "Python (Creating more sophisticated applications and data analytics soultions)",
+        "Java & Javascript",
+      ],
     },
   ]);
 
@@ -197,7 +225,7 @@ const Job = ({
           {/* Timeline Container - Bigger Roadmap with 3x spacing and scrolling */}
           <div
             ref={scrollContainerRef}
-            className="flex-1 overflow-y-auto overflow-x-hidden relative cursor-grab active:cursor-grabbing"
+            className="flex-1 overflow-y-auto overflow-x-hidden relative cursor-grab active:cursor-grabbing custom-scrollbar"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -205,13 +233,13 @@ const Job = ({
           >
             <div
               className="relative right-80"
-              style={{ minHeight: "1800px", width: "100%" }}
+              style={{ minHeight: "1900px", width: "100%" }}
             >
               {/* Sine Wave Curve on Right - Simplified */}
               <svg
                 className="absolute pointer-events-none"
                 width="100%"
-                height="1800"
+                height="1850"
                 style={{ zIndex: 1 }}
               >
                 <path
@@ -225,6 +253,14 @@ const Job = ({
     T 380 1200
     T 380 1380
     T 380 1560
+    T 380 1740
+    T 380 1920
+    T 380 2100
+    T 380 2280
+    T 380 2460
+    T 380 2640
+    T 380 2820
+    T 380 3000
   "
                   fill="none"
                   stroke="#f97316"
@@ -269,7 +305,7 @@ const Job = ({
                       <p className="text-gray-500 text-xl font-semibold mb-2">
                         Responsibilities:
                       </p>
-                      <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5">
+                      <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5 pr-8">
                         {workExperiences[0].responsibilities.map((resp, i) => (
                           <li key={i}>{resp}</li>
                         ))}
@@ -280,7 +316,7 @@ const Job = ({
               </div>
 
               {/* Work 2 - Position with Tailwind classes */}
-              <div className="absolute ml-97 mt-130 flex items-start">
+              <div className="absolute ml-95 mt-155 flex items-start">
                 <div className="relative flex-shrink-0 mt-1">
                   <div
                     className="absolute w-8 h-8 rounded-full bg-orange-500 opacity-30"
@@ -298,7 +334,7 @@ const Job = ({
                     }}
                   />
                 </div>
-                <div className="ml-5 max-w-[1200px]">
+                <div className="ml-5 max-w-[1200px] ">
                   <h3 className="text-white font-bold text-4xl mb-3">
                     {workExperiences[1]?.title || "Work 2"}
                   </h3>
@@ -309,11 +345,11 @@ const Job = ({
                     {workExperiences[1]?.year || "2020 - Present"}
                   </p>
                   {workExperiences[1]?.responsibilities && (
-                    <div className="mb-4 w-[500px]">
+                    <div className="mb-4 w-[500px] ">
                       <p className="text-gray-500 text-xl font-semibold mb-2">
                         Responsibilities:
                       </p>
-                      <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5">
+                      <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5 pr-8">
                         {workExperiences[1].responsibilities.map((resp, i) => (
                           <li key={i}>{resp}</li>
                         ))}
@@ -325,7 +361,7 @@ const Job = ({
                       <p className="text-gray-500 text-xl font-semibold mb-2">
                         Learned:
                       </p>
-                      <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5">
+                      <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5 pr-8">
                         {workExperiences[1].learned.map((skill, i) => (
                           <li key={i}>{skill}</li>
                         ))}
@@ -333,8 +369,9 @@ const Job = ({
                     </div>
                   )}
                 </div>
-                {/* Work 2 - Position with Tailwind classes */}
-                <div className="absolute ml-1 mt-105 flex items-start">
+
+                {/* Work 3 - Position with Tailwind classes */}
+                <div className="absolute ml-1 mt-150 flex items-start">
                   <div className="relative flex-shrink-0 mt-1">
                     <div
                       className="absolute w-8 h-8 rounded-full bg-orange-500 opacity-30"
@@ -369,7 +406,7 @@ const Job = ({
                         <p className="text-gray-500 text-xl font-semibold mb-2">
                           Responsibilities:
                         </p>
-                        <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5">
+                        <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5 pr-8">
                           {workExperiences[2].responsibilities.map(
                             (resp, i) => (
                               <li key={i}>{resp}</li>
@@ -383,7 +420,7 @@ const Job = ({
                         <p className="text-gray-500 text-xl font-semibold mb-2">
                           Learned:
                         </p>
-                        <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5">
+                        <ul className="text-gray-400 text-xl list-disc list-inside space-y-1.5 pr-8">
                           {workExperiences[2].learned.map((skill, i) => (
                             <li key={i}>{skill}</li>
                           ))}
@@ -407,6 +444,33 @@ const Job = ({
               opacity: 0.7;
               transform: scale(1.1);
             }
+          }
+          
+          /* Custom Scrollbar Styling */
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 10px;
+          }
+          
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(17, 24, 39, 0.5);
+            border-radius: 5px;
+          }
+          
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #3b82f6, #2563eb);
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          }
+          
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #2563eb, #1d4ed8);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          }
+          
+          /* Firefox scrollbar styling */
+          .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #FF8C00 rgba(17, 24, 39, 0.5);
           }
         `}</style>
       </AppsLayout>
