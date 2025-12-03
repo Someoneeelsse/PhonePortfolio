@@ -342,7 +342,33 @@ export default function ProjectsCard({
 
   const handleDotPointerLeave = () => {
     setIsHovering(false);
+    // Reset dragging state if mouse leaves while dragging
+    if (isDragging) {
+      setIsDragging(false);
+      checkProjectSelection(-ringAngle);
+    }
   };
+
+  // Global mouse up listener to catch mouse releases outside the ring
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      if (isDragging) {
+        setIsDragging(false);
+        checkProjectSelection(-ringAngle);
+      }
+    };
+
+    // Add global listener when dragging starts
+    if (isDragging) {
+      window.addEventListener("mouseup", handleGlobalMouseUp);
+      window.addEventListener("pointerup", handleGlobalMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener("mouseup", handleGlobalMouseUp);
+      window.removeEventListener("pointerup", handleGlobalMouseUp);
+    };
+  }, [isDragging, ringAngle]);
 
   // Initialize ring angle based on current project
   useEffect(() => {
@@ -461,6 +487,7 @@ export default function ProjectsCard({
         onPointerDown={handleDotPointerDown}
         onPointerMove={handleDotPointerMove}
         onPointerUp={handleDotPointerUp}
+        onPointerLeave={handleDotPointerLeave}
       >
         <torusGeometry args={[width * 0.6, 0.1, 16, 32]} />
       </mesh>
@@ -472,6 +499,7 @@ export default function ProjectsCard({
         onPointerDown={handleDotPointerDown}
         onPointerMove={handleDotPointerMove}
         onPointerUp={handleDotPointerUp}
+        onPointerLeave={handleDotPointerLeave}
       >
         <circleGeometry args={[width * 0.6, 32]} />
         <meshBasicMaterial transparent opacity={0} side={THREE.DoubleSide} />
@@ -518,9 +546,9 @@ export default function ProjectsCard({
                 width: "600px",
                 height: "600px",
                 transform: `
-      rotateX(65deg)
+      rotateX(62deg)
       rotateY(180deg)
-      rotateZ(330deg)
+      rotateZ(275deg)
       rotate(180deg)
     `,
                 transformStyle: "preserve-3d",
@@ -542,7 +570,7 @@ export default function ProjectsCard({
                   strokeWidth="16"
                   strokeLinecap="round"
                   fill="none"
-                  strokeDasharray="370 158" // 70% visible, 30% gap
+                  strokeDasharray="238 290"
                   transform="rotate(-45 200 200)" // rotate so the gap is positioned nicely
                 />
 
