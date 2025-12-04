@@ -26,24 +26,25 @@ const projects = [
     title: "YouTube Analyzer",
     description:
       "A web app where users can enter any YouTube channel and get detailed stats across different time frames. It also runs AI-powered reviews of up to 45 videos per channel, giving summaries and practical insights.",
-    video: "/images/LockScreen.jpg",
+    video: "/images/projects/YoutubeAnalyzer.png",
     link: "https://youtubechannelanalyzer.vercel.app/",
-    technologies: ["React", "Node.js", "YouTube API", "Chart.js"],
-    features: ["Data Analytics", "API Handling", "AI Analysis"],
+    technologies: ["React", "FastAPI", "YouTube API", "LLM"],
+    features: [
+      "Fullstack Application",
+      "Data Analytics",
+      "API Handling",
+      "AI Analysis",
+    ],
   },
   {
     id: 2,
     title: "Digital Graffiti",
     description:
       "A small side project — an online gallery where anyone can make one drawing on a shared canvas. Once saved, the drawing stays there permanently with the label the creator chose.",
-    video: "/images/LockScreen.jpg",
+    video: "/images/projects/DigitalFootPrint.png",
     link: "https://digitalgraffiti.vercel.app/",
-    technologies: ["React", "Node.js", "YouTube API", "Chart.js"],
-    features: [
-      "Web development",
-      "Databse using Supabase",
-      "Custom Drawing Logic",
-    ],
+    technologies: ["JavaScript", "HTML", "CSS", "PostgreSQL"],
+    features: ["Frontend Application", "Custom Drawing Logic", "Shared Canvas"],
   },
 
   {
@@ -51,10 +52,10 @@ const projects = [
     title: "Design Hub",
     description:
       "A site designed to highlight a fresh, uniquely styled website every month. It’s built to give anonymous artists and designers a platform to share their work.",
-    video: "/images/LockScreen.jpg",
-    link: "https://github.com/Someoneeelsse/Parralax",
-    technologies: ["React", "Node.js", "YouTube API", "Chart.js"],
-    features: ["3D Showcase", "Blender Models"],
+    video: "/images/projects/DesignHub.png",
+    link: "https://design-hub-omega.vercel.app/",
+    technologies: ["React", "Threejs", "Blender"],
+    features: ["Frontend Application", "3D Showcase", "Blender Models"],
   },
   {
     id: 4,
@@ -63,11 +64,11 @@ const projects = [
       "A fun project where AI writes articles as if they came from a parallel universe. Each new piece is stored in memory, so the AI builds on past events before writing the next one.",
     video: "/images/LockScreen.jpg",
     link: "https://github.com/Someoneeelsse/Parralax",
-    technologies: ["React", "Node.js", "YouTube API", "Chart.js"],
+    technologies: ["React", "FastAPI", "PostgreSQL", "LLM"],
     features: [
-      "Web development",
-      "Databse using Supabase",
-      "Custom Drawing Logic",
+      "Fullstack Application",
+      "Database using PostgreSQL",
+      "AI Powered Articles",
     ],
   },
   {
@@ -75,10 +76,20 @@ const projects = [
     title: "Auto SRE",
     description:
       "A DevOps-focused site that automatically redeploys whenever a new commit is pushed to the repository, keeping everything up to date without manual steps.",
-    video: "/images/LockScreen.jpg",
-    link: "https://github.com/Someoneeelsse/Parralax",
-    technologies: ["React", "Node.js", "YouTube API", "Chart.js"],
-    features: ["GitHub Actions & CI/CD", "Docker", "Kubernetes", "Grafana"],
+    video: "/images/projects/AutoSRE.png",
+    link: "https://github.com/Someoneeelsse/AutoSRE",
+    technologies: [
+      "React",
+      "GitHub Actions",
+      "Docker",
+      "Kubernetes",
+      "Grafana",
+    ],
+    features: [
+      "Fullstack Application",
+      "GitHub Actions & CI/CD",
+      "Monitoring and Logging",
+    ],
   },
 ];
 
@@ -611,36 +622,43 @@ export default function ProjectsCard({
         <Html position={[width + 10.5, -1, 0]} center>
           <div
             ref={infoBoxRef}
-            className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-md border border-cyan-400/40 rounded-xl p-8 w-96 text-white shadow-2xl"
+            className="rounded-xl p-6 w-96 
+             bg-white/5 backdrop-blur-xl 
+             border border-white/10 
+             text-slate-200 shadow-[0_4px_20px_rgba(0,0,0,0.25)]"
             style={{
-              boxShadow:
-                "0 0 30px rgba(34, 211, 238, 0.4), inset 0 0 30px rgba(34, 211, 238, 0.1), 0 8px 32px rgba(0, 0, 0, 0.3)",
+              pointerEvents: "auto",
+              transition: "all 0.25s ease",
+              cursor: "default",
             }}
           >
-            <h3
-              className="text-2xl font-bold text-cyan-400 mb-4"
-              style={{ textShadow: "0 0 15px #22d3ee" }}
-            >
+            {/* Title */}
+            <h3 className="text-xl font-semibold text-white/90 mb-4 tracking-wide">
               {projects[currentProject].title}
             </h3>
 
+            {/* Description */}
             {projects[currentProject].description && (
-              <p className="text-base text-slate-200 mb-6 leading-relaxed">
+              <p className="text-sm text-white/80 mb-6 leading-relaxed">
                 {projects[currentProject].description}
               </p>
             )}
 
+            {/* Technologies */}
             {projects[currentProject].technologies && (
               <div className="mb-6">
-                <h4 className="text-base font-semibold text-cyan-300 mb-3">
-                  Technologies:
+                <h4 className="text-sm font-medium text-white/70 mb-2">
+                  Technologies
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {projects[currentProject].technologies.map((tech, index) => (
+                  {projects[currentProject].technologies.map((tech, i) => (
                     <span
-                      key={index}
-                      className="px-3 py-1.5 bg-cyan-500/20 text-cyan-300 text-sm rounded-lg border border-cyan-400/40 hover:bg-cyan-500/30 transition-colors"
-                      style={{ textShadow: "0 0 8px #22d3ee" }}
+                      key={i}
+                      className="
+              px-2.5 py-1 bg-white/5 text-white/80 text-xs 
+              rounded-md border border-white/10
+              hover:bg-white/10 transition-colors
+            "
                     >
                       {tech}
                     </span>
@@ -649,15 +667,16 @@ export default function ProjectsCard({
               </div>
             )}
 
+            {/* Features — updated colors */}
             {projects[currentProject].features && (
               <div className="mb-6">
-                <h4 className="text-base font-semibold text-cyan-300 mb-3">
-                  Features:
+                <h4 className="text-sm font-medium text-white/70 mb-2">
+                  Features
                 </h4>
-                <ul className="text-sm text-slate-300 space-y-2">
-                  {projects[currentProject].features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <span className="text-cyan-400 mr-3 mt-1">✦</span>
+                <ul className="text-sm text-white/80 space-y-1.5">
+                  {projects[currentProject].features.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <div className="w-1 h-1 rounded-full bg-white/40 mt-2" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -665,13 +684,19 @@ export default function ProjectsCard({
               </div>
             )}
 
+            {/* Link */}
             {projects[currentProject].link && (
               <a
                 href={projects[currentProject].link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-6 py-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 text-base font-medium rounded-lg border border-cyan-400/50 hover:from-cyan-500/30 hover:to-blue-500/30 transition-all duration-300 hover:scale-105"
-                style={{ textShadow: "0 0 10px #22d3ee" }}
+                className="
+        inline-block px-4 py-2 mt-2 
+        bg-white/5 text-white/90 text-sm 
+        rounded-md border border-white/10 
+        hover:bg-white/10 hover:text-white
+        transition-all duration-200
+      "
               >
                 View Project →
               </a>

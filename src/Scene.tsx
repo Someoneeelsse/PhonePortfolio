@@ -584,6 +584,7 @@ export default function Scene({
   const [showProjectsCard, setShowProjectsCard] = useState(false);
   const [shouldResetToInitial, setShouldResetToInitial] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [showResetButton, setShowResetButton] = useState(false);
   const isResettingRef = useRef(false);
   const chargerGroupRef = useRef<THREE.Group>(null);
 
@@ -943,6 +944,7 @@ export default function Scene({
       isResettingRef.current = true;
       // Hide ProjectsCard immediately
       setShowProjectsCard(false);
+      setShowResetButton(false);
       // Reset phone movement state
       setShouldMovePhoneToProjects(false);
       // Start background reset animation
@@ -1258,11 +1260,13 @@ export default function Scene({
               // Wait 1 second after phone animation completes, then show ProjectsCard
               setTimeout(() => {
                 setShowProjectsCard(true);
+                setShowResetButton(true);
               }, 1000);
             }}
             shouldResetToInitial={shouldResetToInitial}
             onResetComplete={() => {
               setShowProjectsCard(false);
+              setShowResetButton(false);
               setShouldResetToInitial(false);
               setShouldMovePhoneToProjects(false);
               // Background reset is handled by handleBackgroundReset animation
@@ -1314,8 +1318,8 @@ export default function Scene({
         )}
       </Canvas>
 
-      {/* Reset Button - Show when ProjectsCard is visible or during reset */}
-      {(showProjectsCard || isResetting) && (
+      {/* Reset Button - Show when ProjectsCard is visible */}
+      {showResetButton && (
         <button
           onClick={() => {
             // Set resetting flag to keep button visible during animation
@@ -1330,6 +1334,7 @@ export default function Scene({
             handleBackgroundReset(() => {
               // Step 2: Hide ProjectsCard after background animation completes
               setShowProjectsCard(false);
+              setShowResetButton(false);
               // Step 3: Wait a bit then move phone back
               setTimeout(() => {
                 setShouldResetToInitial(true);
@@ -1350,10 +1355,26 @@ export default function Scene({
               animateChargerTo(-5.2); // Move charger back to initial position
             }, 7000);
           }}
-          className="fixed top-5 left-90 z-[10001] bg-white/90 hover:bg-white text-gray-800 px-2 py-2 rounded-lg shadow-lg flex items-center transition-all hover:scale-105"
-          style={{ backdropFilter: "blur(10px)" }}
+          style={{
+            cursor: "default",
+          }}
+          className="
+          fixed top-[160px] right-[547px] z-[10001]
+          px-3 py-2
+          rounded-xl
+          bg-white/5 
+          backdrop-blur-xl
+          border border-white/10
+          text-white/80
+          shadow-[0_4px_20px_rgba(0,0,0,0.25)]
+          hover:bg-white/10 hover:text-white
+          transition-all duration-200
+          flex items-center gap-1
+          
+        "
         >
-          <LuArrowBigLeftDash className="text-2xl" />
+          <LuArrowBigLeftDash className="text-xl" />
+          <span className="text-sm tracking-wide">Back</span>
         </button>
       )}
 
