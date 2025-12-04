@@ -7,6 +7,7 @@ import LoadingScreen from "./components/LoadingScreen";
 import Phone from "./models/Phone";
 import Subtitles from "./components/Subtitles";
 import { LuArrowBigLeftDash } from "react-icons/lu";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import Charger from "./models/Charger";
 import ProjectsCard from "./components/ProjectsCard";
 import fireworksVertexShader from "/shaders/fireworks/vertex.glsl?raw";
@@ -585,6 +586,7 @@ export default function Scene({
   const [shouldResetToInitial, setShouldResetToInitial] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [showResetButton, setShowResetButton] = useState(false);
+  const [isChargerConnected, setIsChargerConnected] = useState(true);
   const isResettingRef = useRef(false);
   const chargerGroupRef = useRef<THREE.Group>(null);
 
@@ -621,6 +623,26 @@ export default function Scene({
   useEffect(() => {
     dispatchPhoneScreenVisibility(true);
   }, [dispatchPhoneScreenVisibility]);
+
+  // Listen for charger connection status
+  useEffect(() => {
+    const handleChargerConnected = (event: Event) => {
+      const customEvent = event as CustomEvent<{ connected: boolean }>;
+      setIsChargerConnected(customEvent.detail.connected);
+    };
+
+    window.addEventListener(
+      "chargerConnected",
+      handleChargerConnected as EventListener
+    );
+
+    return () => {
+      window.removeEventListener(
+        "chargerConnected",
+        handleChargerConnected as EventListener
+      );
+    };
+  }, []);
 
   useEffect(() => {
     if (!shouldMovePhoneToProjects) return;
@@ -1189,6 +1211,106 @@ export default function Scene({
             onLoadingAnimationComplete={handleLoadingAnimationComplete}
             initialProgress={showError ? 0.95 : 0}
           />
+        </div>
+      )}
+
+      {/* Info Button - Outside rotated container */}
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "20px",
+            zIndex: 10002,
+            pointerEvents: showError && isChargerConnected ? "auto" : "none",
+            opacity: showError && isChargerConnected ? 1 : 0,
+            transition: "opacity 0.5s ease-in-out",
+          }}
+        >
+          <style>
+            {`
+              .info-tooltip {
+                position: absolute;
+                top: calc(100% + 12px);
+                left: 0px;
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                color: rgb(226, 232, 240);
+                padding: 12px 16px;
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                font-size: 14px;
+                line-height: 1.6;
+                pointer-events: auto;
+                opacity: 0;
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                transform: translateY(-5px);
+                z-index: 10003;
+                font-weight: 300;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+                cursor: pointer;
+                min-width: 320px;
+                max-width: 400px;
+                white-space: normal;
+                text-align: left;
+              }
+              
+              .info-button-wrapper:hover .info-tooltip,
+              .info-tooltip:hover {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            `}
+          </style>
+          <div className="info-button-wrapper">
+            <a
+              href="https://simple-portfolio-someoneelsse.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                window.open(
+                  "https://simple-portfolio-someoneelsse.vercel.app/",
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+                e.preventDefault();
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                color: "white",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                textDecoration: "none",
+                position: "relative",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor =
+                  "rgba(255, 255, 255, 0.2)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor =
+                  "rgba(255, 255, 255, 0.1)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+              }}
+            >
+              <AiOutlineInfoCircle size={20} />
+              <div className="info-tooltip">
+                This portfolio is quite large, and it might take a while to go
+                through everything.
+                <br />
+                For a simplified version, click here: →
+              </div>
+            </a>
+          </div>
         </div>
       )}
 

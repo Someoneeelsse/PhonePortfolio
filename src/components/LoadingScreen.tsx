@@ -173,27 +173,28 @@ export default function LoadingScreen({
   }, [showName, onLoadingAnimationComplete]);
 
   return (
-    <div
-      className="loading-screen-container"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        background: "transparent",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 1,
-        userSelect: "none",
-        WebkitUserSelect: "none",
-        MozUserSelect: "none",
-        msUserSelect: "none",
-      }}
-    >
-      <style>
-        {`
+    <>
+      <div
+        className="loading-screen-container"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          background: "transparent",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1,
+          userSelect: "none",
+          WebkitUserSelect: "none",
+          MozUserSelect: "none",
+          msUserSelect: "none",
+        }}
+      >
+        <style>
+          {`
           @keyframes fadeIn {
             from {
               opacity: 0;
@@ -224,231 +225,232 @@ export default function LoadingScreen({
             user-select: none;
           }
         `}
-      </style>
-      <div
-        style={{
-          textAlign: "center",
-          position: "relative",
-          userSelect: "none",
-        }}
-      >
+        </style>
         <div
           style={{
-            color: "white",
-            fontSize: "16px",
-            fontWeight: "300",
-            marginBottom: "10px",
-            opacity: showName ? 0 : 1,
-            transition: "opacity 1s ease-out",
+            textAlign: "center",
+            position: "relative",
             userSelect: "none",
-            WebkitUserSelect: "none",
-            MozUserSelect: "none",
-            msUserSelect: "none",
-          }}
-        >
-          Loading...
-        </div>
-        <div
-          ref={loadingBarRef}
-          style={{
-            width: "300px",
-            height: "6px",
-            backgroundColor: "rgba(255, 255, 255, 0.2)",
-            borderRadius: "3px",
-            overflow: "hidden",
           }}
         >
           <div
             style={{
-              width: `${progress * 100}%`,
-              height: "100%",
-              backgroundColor: "white",
-              borderRadius: "3px",
-              transition: "width 0.1s linear",
-            }}
-          />
-        </div>
-
-        {showName && (
-          <div
-            ref={nameTextRef}
-            style={{
-              position: "absolute",
-              top: "100%",
-              left: "50%",
-              transform: "translateX(-50%) rotate(180deg)",
               color: "white",
               fontSize: "16px",
               fontWeight: "300",
-              textAlign: "center",
-              marginTop: "20px",
-              opacity: 1,
-              animation: "fadeIn 1s ease-in",
+              marginBottom: "10px",
+              opacity: showName ? 0 : 1,
+              transition: "opacity 1s ease-out",
               userSelect: "none",
               WebkitUserSelect: "none",
               MozUserSelect: "none",
               msUserSelect: "none",
             }}
           >
-            Someoneelsse
+            Loading...
           </div>
-        )}
-
-        {/* Social media text - appears when phone starts falling */}
-        {showSocialMedia && (
           <div
-            ref={socialMediaRef}
+            ref={loadingBarRef}
             style={{
-              position: "fixed",
-              bottom: "0%",
-              right: "34%",
-
-              rotate: "270deg",
-              color: "white",
-              transform: hasInitialAnimationPlayed
-                ? "translateY(-50%)"
-                : undefined,
-              fontSize: "20px",
-              fontWeight: "300",
-              textAlign: "left",
-
-              animation: hasInitialAnimationPlayed
-                ? "none"
-                : "fadeInSocialMedia 1s ease-in forwards",
-              userSelect: "none",
-              WebkitUserSelect: "none",
-              MozUserSelect: "none",
-              msUserSelect: "none",
-              display: "flex",
-              flexDirection: "column",
-              gap: "90px",
-              zIndex: 2000,
-              pointerEvents: isChargerConnected ? "auto" : "none",
-              marginBottom: "-65px",
-              opacity: isChargerConnected ? 1 : 0,
-              transition: hasInitialAnimationPlayed
-                ? "opacity 0.5s ease-in-out"
-                : "none",
+              width: "300px",
+              height: "6px",
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              borderRadius: "3px",
+              overflow: "hidden",
             }}
           >
-            <a
-              ref={githubLinkRef}
-              href="https://github.com/Someoneeelsse"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => {
-                window.open(
-                  "https://github.com/Someoneeelsse",
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-                e.preventDefault();
-              }}
+            <div
               style={{
-                color: "white",
-                textDecoration: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                cursor: "pointer",
-                transition: "opacity 0.2s ease",
-                pointerEvents: "auto",
-                marginBottom: "50px",
+                width: `${progress * 100}%`,
+                height: "100%",
+                backgroundColor: "white",
+                borderRadius: "3px",
+                transition: "width 0.1s linear",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.7";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
-              }}
-            >
-              <LuGithub size={24} />
-              <span
-                style={{
-                  textDecoration: "underline",
-                  textUnderlineOffset: "4px",
-                }}
-              >
-                @Someoneelsse
-              </span>
-            </a>
-            <a
-              ref={linkedinLinkRef}
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => {
-                window.open(
-                  "https://linkedin.com",
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-                e.preventDefault();
-              }}
-              style={{
-                color: "white",
-                textDecoration: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                cursor: "pointer",
-                transition: "opacity 0.2s ease",
-                pointerEvents: "auto",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.7";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
-              }}
-            >
-              <AiOutlineLinkedin size={24} />
-              <span
-                style={{
-                  textDecoration: "underline",
-                  textUnderlineOffset: "4px",
-                }}
-              >
-                @Jakub Grzybowski
-              </span>
-            </a>
-            <a
-              ref={instagramLinkRef}
-              href="mailto:panjakub15@gmail.com"
-              onClick={() => {
-                window.location.href = "mailto:panjakub15@gmail.com";
-              }}
-              style={{
-                color: "white",
-                textDecoration: "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                cursor: "pointer",
-                transition: "opacity 0.2s ease",
-                pointerEvents: "auto",
-                marginTop: "50px",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.7";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
-              }}
-            >
-              <IoMailOpenOutline size={24} />
-              <span
-                style={{
-                  textDecoration: "underline",
-                  textUnderlineOffset: "4px",
-                }}
-              >
-                panjakub15@gmail.com
-              </span>
-            </a>
+            />
           </div>
-        )}
+
+          {showName && (
+            <div
+              ref={nameTextRef}
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: "50%",
+                transform: "translateX(-50%) rotate(180deg)",
+                color: "white",
+                fontSize: "16px",
+                fontWeight: "300",
+                textAlign: "center",
+                marginTop: "20px",
+                opacity: 1,
+                animation: "fadeIn 1s ease-in",
+                userSelect: "none",
+                WebkitUserSelect: "none",
+                MozUserSelect: "none",
+                msUserSelect: "none",
+              }}
+            >
+              Someoneelsse
+            </div>
+          )}
+
+          {/* Social media text - appears when phone starts falling */}
+          {showSocialMedia && (
+            <div
+              ref={socialMediaRef}
+              style={{
+                position: "fixed",
+                bottom: "0%",
+                right: "34%",
+
+                rotate: "270deg",
+                color: "white",
+                transform: hasInitialAnimationPlayed
+                  ? "translateY(-50%)"
+                  : undefined,
+                fontSize: "20px",
+                fontWeight: "300",
+                textAlign: "left",
+
+                animation: hasInitialAnimationPlayed
+                  ? "none"
+                  : "fadeInSocialMedia 1s ease-in forwards",
+                userSelect: "none",
+                WebkitUserSelect: "none",
+                MozUserSelect: "none",
+                msUserSelect: "none",
+                display: "flex",
+                flexDirection: "column",
+                gap: "90px",
+                zIndex: 2000,
+                pointerEvents: isChargerConnected ? "auto" : "none",
+                marginBottom: "-65px",
+                opacity: isChargerConnected ? 1 : 0,
+                transition: hasInitialAnimationPlayed
+                  ? "opacity 0.5s ease-in-out"
+                  : "none",
+              }}
+            >
+              <a
+                ref={githubLinkRef}
+                href="https://github.com/Someoneeelsse"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  window.open(
+                    "https://github.com/Someoneeelsse",
+                    "_blank",
+                    "noopener,noreferrer"
+                  );
+                  e.preventDefault();
+                }}
+                style={{
+                  color: "white",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  cursor: "pointer",
+                  transition: "opacity 0.2s ease",
+                  pointerEvents: "auto",
+                  marginBottom: "50px",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.7";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                }}
+              >
+                <LuGithub size={24} />
+                <span
+                  style={{
+                    textDecoration: "underline",
+                    textUnderlineOffset: "4px",
+                  }}
+                >
+                  @Someoneelsse
+                </span>
+              </a>
+              <a
+                ref={linkedinLinkRef}
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  window.open(
+                    "https://linkedin.com",
+                    "_blank",
+                    "noopener,noreferrer"
+                  );
+                  e.preventDefault();
+                }}
+                style={{
+                  color: "white",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  cursor: "pointer",
+                  transition: "opacity 0.2s ease",
+                  pointerEvents: "auto",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.7";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                }}
+              >
+                <AiOutlineLinkedin size={24} />
+                <span
+                  style={{
+                    textDecoration: "underline",
+                    textUnderlineOffset: "4px",
+                  }}
+                >
+                  @Jakub Grzybowski
+                </span>
+              </a>
+              <a
+                ref={instagramLinkRef}
+                href="mailto:panjakub15@gmail.com"
+                onClick={() => {
+                  window.location.href = "mailto:panjakub15@gmail.com";
+                }}
+                style={{
+                  color: "white",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  cursor: "pointer",
+                  transition: "opacity 0.2s ease",
+                  pointerEvents: "auto",
+                  marginTop: "50px",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = "0.7";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = "1";
+                }}
+              >
+                <IoMailOpenOutline size={24} />
+                <span
+                  style={{
+                    textDecoration: "underline",
+                    textUnderlineOffset: "4px",
+                  }}
+                >
+                  panjakub15@gmail.com
+                </span>
+              </a>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
