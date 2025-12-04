@@ -584,7 +584,7 @@ export default function Scene({
     useState(false);
   const [showProjectsCard, setShowProjectsCard] = useState(false);
   const [shouldResetToInitial, setShouldResetToInitial] = useState(false);
-  const [isResetting, setIsResetting] = useState(false);
+  const [, setIsResetting] = useState(false);
   const [showResetButton, setShowResetButton] = useState(false);
   const [isChargerConnected, setIsChargerConnected] = useState(true);
   const isResettingRef = useRef(false);
