@@ -541,6 +541,7 @@ export default function Scene({
   const [showSecondSubtitles, setShowSecondSubtitles] = useState(false);
   const [showFinalSubtitle, setShowFinalSubtitle] = useState(false);
   const [shouldFadeOutSubtitles, setShouldFadeOutSubtitles] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [gravitationText, setGravitationText] = useState(false);
   const [showCompletionText, setShowCompletionText] = useState(false);
   const [shouldFadeOutFinal, setShouldFadeOutFinal] = useState(false);
@@ -623,6 +624,25 @@ export default function Scene({
   useEffect(() => {
     dispatchPhoneScreenVisibility(true);
   }, [dispatchPhoneScreenVisibility]);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileDevice =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) ||
+        (window.innerWidth <= 768 && window.innerHeight <= 1024);
+      setIsMobile(isMobileDevice);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
 
   // Listen for charger connection status
   useEffect(() => {
@@ -1215,7 +1235,7 @@ export default function Scene({
       )}
 
       {/* Info Button - Outside rotated container */}
-      {isLoading && (
+      {isLoading && !isMobile && (
         <div
           style={{
             position: "fixed",
@@ -1501,7 +1521,7 @@ export default function Scene({
       )}
 
       {/* Fixed "Nice" subtitle that doesn't rotate */}
-      {showError && (
+      {showError && !isMobile && (
         <Subtitles
           text="Ugh, again? The person who built this site really needs to sort out that loading issue."
           className="top-140 left-1/2 -translate-x-1/2 max-w-[870px]"
@@ -1517,7 +1537,7 @@ export default function Scene({
           }}
         />
       )}
-      {showSecondSubtitles && (
+      {showSecondSubtitles && !isMobile && (
         <Subtitles
           text="Would you mind helping me get this thing to spin up?"
           className="top-155 left-1/2 -translate-x-1/2 max-w-[760px]"
@@ -1540,7 +1560,7 @@ export default function Scene({
           showButton={true}
         />
       )}
-      {isHelpingTextButtonClicked && (
+      {isHelpingTextButtonClicked && !isMobile && (
         <Subtitles
           text="Perfect"
           className="top-170 left-1/2 -translate-x-1/2 max-w-[100px] "
@@ -1550,7 +1570,7 @@ export default function Scene({
           shouldFadeOut={shouldFadeOutSubtitles}
         />
       )}
-      {showFinalSubtitle && (
+      {showFinalSubtitle && !isMobile && (
         <>
           {/* Thank you subtitle positioned below and to the left of arrow */}
           <Subtitles
@@ -1567,7 +1587,7 @@ export default function Scene({
               }, 200);
             }}
           />
-          {gravitationText && (
+          {gravitationText && !isMobile && (
             <>
               <ArrowAnimation shouldFadeOut={shouldFadeOutFinal} />
               <Subtitles
@@ -1581,7 +1601,7 @@ export default function Scene({
             </>
           )}
 
-          {showCompletionText && (
+          {showCompletionText && !isMobile && (
             <Subtitles
               text="Thanks and enjoy!"
               className="top-75 right-40 max-w-[197px]"
@@ -1745,25 +1765,27 @@ export default function Scene({
           }}
         >
           {/* Charge the phone text */}
-          <Subtitles
-            text="It looks like phone, is dead, can you charge it?"
-            className=""
-            showNextButton={true}
-            characterWidthParam={9.5}
-            shouldFadeOut={shouldFadeOutChargeText}
-            onNextClick={() => {
-              // Fade out the charge text
-              setShouldFadeOutChargeText(true);
-              // Dispatch event to change camera position (same as PhoneChargerText.tsx)
-              window.dispatchEvent(new CustomEvent("changeCameraPosition"));
-            }}
-            showButton={true}
-          />
+          {!isMobile && (
+            <Subtitles
+              text="It looks like phone, is dead, can you charge it?"
+              className=""
+              showNextButton={true}
+              characterWidthParam={9.5}
+              shouldFadeOut={shouldFadeOutChargeText}
+              onNextClick={() => {
+                // Fade out the charge text
+                setShouldFadeOutChargeText(true);
+                // Dispatch event to change camera position (same as PhoneChargerText.tsx)
+                window.dispatchEvent(new CustomEvent("changeCameraPosition"));
+              }}
+              showButton={true}
+            />
+          )}
         </div>
       )}
 
       {/* Messages app subtitle */}
-      {showMessagesSubtitle && (
+      {showMessagesSubtitle && !isMobile && (
         <>
           <Subtitles
             text="We can skip the messages checking on this phone"
@@ -1778,7 +1800,7 @@ export default function Scene({
               }, 650);
             }}
           />
-          {showNothingSpecialSubtitle && (
+          {showNothingSpecialSubtitle && !isMobile && (
             <Subtitles
               text="Nothing special here..."
               className="top-65 left-308 -translate-x-1/2 max-w-[900px]"
@@ -1802,7 +1824,7 @@ export default function Scene({
       )}
 
       {/* Email app subtitle */}
-      {showEmailSubtitle && (
+      {showEmailSubtitle && !isMobile && (
         <Subtitles
           text="You can send me an email from here"
           className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"
@@ -1825,7 +1847,7 @@ export default function Scene({
       )}
 
       {/* Safari app subtitle */}
-      {showSafariSubtitle && (
+      {showSafariSubtitle && !isMobile && (
         <Subtitles
           text="Well that is awkward"
           className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"
@@ -1848,7 +1870,7 @@ export default function Scene({
       )}
 
       {/* Notes app subtitle */}
-      {showNotesSubtitle && (
+      {showNotesSubtitle && !isMobile && (
         <Subtitles
           text="The only TODO app I would ever make..."
           className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"
@@ -1871,7 +1893,7 @@ export default function Scene({
       )}
 
       {/* Snake app subtitle */}
-      {showSnakeSubtitle && (
+      {showSnakeSubtitle && !isMobile && (
         <Subtitles
           text="I have spend to much time on this; Playing..."
           className="top-50 left-4/5 -translate-x-1/2 max-w-[900px]"

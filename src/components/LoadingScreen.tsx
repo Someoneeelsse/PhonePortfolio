@@ -27,12 +27,44 @@ export default function LoadingScreen({
   const [isChargerConnected, setIsChargerConnected] = useState(true);
   const [hasInitialAnimationPlayed, setHasInitialAnimationPlayed] =
     useState(false);
+  const [showMobileNotification, setShowMobileNotification] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const loadingBarRef = useRef<HTMLDivElement>(null);
   const nameTextRef = useRef<HTMLDivElement>(null);
   const socialMediaRef = useRef<HTMLDivElement>(null);
   const githubLinkRef = useRef<HTMLAnchorElement>(null);
   const linkedinLinkRef = useRef<HTMLAnchorElement>(null);
   const instagramLinkRef = useRef<HTMLAnchorElement>(null);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileDevice =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        ) ||
+        (window.innerWidth <= 768 && window.innerHeight <= 1024);
+      setIsMobile(isMobileDevice);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  // Show mobile notification after 4 seconds
+  useEffect(() => {
+    if (isMobile) {
+      const timer = setTimeout(() => {
+        setShowMobileNotification(true);
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile]);
 
   // Change to threshold after 1 second
   useEffect(() => {
@@ -217,6 +249,73 @@ export default function LoadingScreen({
             }
           }
           
+          @keyframes fadeInMobileNotification {
+            from {
+              opacity: 0;
+              transform: translate(-50%, -50%) translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translate(-50%, -50%) translateY(0);
+            }
+          }
+          
+          .mobile-notification-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: white;
+            padding: 32px 28px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 16px;
+            line-height: 1.7;
+            pointer-events: auto;
+            opacity: 0;
+            animation: fadeInMobileNotification 0.5s ease-out forwards;
+            z-index: 10004;
+            font-weight: 300;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            min-width: 320px;
+            max-width: 400px;
+            min-height: 200px;
+            white-space: normal;
+            text-align: left;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+          }
+          
+          .mobile-notification-card-title {
+            font-size: 22px;
+            font-weight: 400;
+            margin-bottom: 4px;
+          }
+          
+          .mobile-notification-card-divider {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 8px 0;
+          }
+          
+          .mobile-notification-card-content {
+            font-size: 16px;
+            line-height: 1.7;
+          }
+          
+          .mobile-notification-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%) scale(1.02);
+          }
+          
           /* Prevent text selection on loading screen */
           .loading-screen-container * {
             -webkit-user-select: none;
@@ -270,7 +369,7 @@ export default function LoadingScreen({
             />
           </div>
 
-          {showName && (
+          {showName && !isMobile && (
             <div
               ref={nameTextRef}
               style={{
@@ -296,7 +395,7 @@ export default function LoadingScreen({
           )}
 
           {/* Social media text - appears when phone starts falling */}
-          {showSocialMedia && (
+          {showSocialMedia && !isMobile && (
             <div
               ref={socialMediaRef}
               style={{
@@ -450,6 +549,37 @@ export default function LoadingScreen({
             </div>
           )}
         </div>
+
+        {/* Mobile notification card */}
+        {showMobileNotification && (
+          <a
+            href="https://simple-portfolio-someoneelsse.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              window.open(
+                "https://simple-portfolio-someoneelsse.vercel.app/",
+                "_blank",
+                "noopener,noreferrer"
+              );
+              e.preventDefault();
+            }}
+            className="mobile-notification-card"
+            style={{
+              textDecoration: "none",
+              color: "white",
+            }}
+          >
+            <div className="mobile-notification-card-title">I am sorry</div>
+            <div className="mobile-notification-card-divider"></div>
+            <div className="mobile-notification-card-content">
+              This website is dedicated for desktop devices only, please visit
+              it on your computer, or device with bigger resolution. If you want
+              to see the Simplified version of my portfolio, click onto that
+              card.
+            </div>
+          </a>
+        )}
       </div>
     </>
   );
