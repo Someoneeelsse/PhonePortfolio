@@ -459,7 +459,11 @@ const PhoneMainScreen = () => {
       );
     } else if (appName === "LinkedIn") {
       // Open LinkedIn directly in new tab
-      window.open("https://linkedin.com", "_blank", "noopener,noreferrer");
+      window.open(
+        "https://www.linkedin.com/in/jakub-grzybowski-99a21a3a0/",
+        "_blank",
+        "noopener,noreferrer"
+      );
     } /*else if (appName === "Settings") {
       setShowSettings(true);
     }*/ else if (appName === "Calculator") {
