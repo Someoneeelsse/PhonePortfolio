@@ -404,8 +404,8 @@ export default function LoadingScreen({
               ref={socialMediaRef}
               style={{
                 position: "fixed",
-                bottom: "0%",
-                right: "34%",
+                bottom: "1%",
+                right: "30%",
 
                 rotate: "270deg",
                 color: "white",
