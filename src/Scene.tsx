@@ -1704,7 +1704,7 @@ export default function Scene({
           className="absolute z-[10000] flex flex-col items-start gap-3 animate-fadeInCorrect"
           style={{
             left: `${phoneScreenPos.x + 250}px`,
-            top: `31.3%`,
+            top: `3%`,
             transform: "translateY(-50%)",
           }}
         >
@@ -1759,7 +1759,7 @@ export default function Scene({
           }`}
           style={{
             left: phoneScreenPos ? `${phoneScreenPos.x - 235}px` : "50%",
-            bottom: phoneScreenPos ? `${phoneScreenPos.y - 480}px` : "20%",
+            bottom: "0.5%",
             transform: phoneScreenPos
               ? "translateY(-50%)"
               : "translate(-50%, -50%)",
@@ -1769,7 +1769,6 @@ export default function Scene({
           {!isMobile && (
             <Subtitles
               text="It looks like phone, is dead, can you charge it?"
-              className=""
               showNextButton={true}
               characterWidthParam={9.5}
               shouldFadeOut={shouldFadeOutChargeText}
