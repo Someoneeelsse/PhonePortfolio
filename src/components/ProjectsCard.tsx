@@ -622,74 +622,59 @@ export default function ProjectsCard({
         <meshBasicMaterial color="#22d3ee" transparent opacity={0.9} />
       </mesh>
 
-      {/* Reset Button - Show when ProjectsCard is visible */}
-      {visible && showResetButton && onReset && (
-        <Html position={[width, height, 0]} center>
-          <div
-            style={{
-              position: "fixed",
-              top: "50%", // 20% from top of viewport
-              left: "85%", // center horizontally
-              transform: "translateX(140%) translateY(50%)",
-              zIndex: 10001,
-            }}
-          >
-            <button
-              onClick={onReset}
-              style={{
-                cursor: "default",
-              }}
-              className="
-          px-3 py-2
-          rounded-xl
-          bg-white/5 
-          backdrop-blur-xl
-          border border-white/10
-          text-white/80
-          shadow-[0_4px_20px_rgba(0,0,0,0.25)]
-          hover:bg-white/10 hover:text-white
-          transition-all duration-200
-          flex items-center gap-1
-          z-[10001]
-        "
-            >
-              <LuArrowBigLeftDash className="text-xl" />
-              <span className="text-sm tracking-wide">Back</span>
-            </button>
-          </div>
-        </Html>
-      )}
-
       {/* Information Box - only show when visible */}
       {visible && (
         <Html position={[width + 10.5, -1, 0]} center>
           <div
             ref={infoBoxRef}
             className="rounded-xl p-6 w-96 
-             bg-white/5 backdrop-blur-xl 
-             border border-white/10 
-             text-slate-200 shadow-[0_4px_20px_rgba(0,0,0,0.25)]"
+       bg-white/5 backdrop-blur-xl 
+       border border-white/10 
+       text-slate-200 shadow-[0_4px_20px_rgba(0,0,0,0.25)] flex flex-col gap-4"
             style={{
               pointerEvents: "auto",
               transition: "all 0.25s ease",
               cursor: "default",
             }}
           >
+            {/* Back Button */}
+            {showResetButton && onReset && (
+              <button
+                onClick={onReset}
+                style={{ cursor: "default" }}
+                className="
+            px-3 py-2
+            rounded-xl
+            bg-white/5 
+            backdrop-blur-xl
+            border border-white/10
+            text-white/80
+            shadow-[0_4px_20px_rgba(0,0,0,0.25)]
+            hover:bg-white/10 hover:text-white
+            transition-all duration-200
+            flex items-center gap-1
+          "
+              >
+                <LuArrowBigLeftDash className="text-xl" />
+                <span className="text-sm tracking-wide">Back</span>
+              </button>
+            )}
+
             {/* Title */}
-            <h3 className="text-xl font-semibold text-white/90 mb-4 tracking-wide">
+            <h3 className="text-xl font-semibold text-white/90 tracking-wide">
               {projects[currentProject].title}
             </h3>
 
             {/* Description */}
             {projects[currentProject].description && (
-              <p className="text-sm text-white/80 mb-6 leading-relaxed">
+              <p className="text-sm text-white/80 leading-relaxed">
                 {projects[currentProject].description}
               </p>
             )}
 
             {/* Technologies */}
             {projects[currentProject].technologies && (
-              <div className="mb-6">
+              <div>
                 <h4 className="text-sm font-medium text-white/70 mb-2">
                   Technologies
                 </h4>
@@ -698,10 +683,10 @@ export default function ProjectsCard({
                     <span
                       key={i}
                       className="
-              px-2.5 py-1 bg-white/5 text-white/80 text-xs 
-              rounded-md border border-white/10
-              hover:bg-white/10 transition-colors
-            "
+                  px-2.5 py-1 bg-white/5 text-white/80 text-xs 
+                  rounded-md border border-white/10
+                  hover:bg-white/10 transition-colors
+                "
                     >
                       {tech}
                     </span>
@@ -710,9 +695,9 @@ export default function ProjectsCard({
               </div>
             )}
 
-            {/* Features — updated colors */}
+            {/* Features */}
             {projects[currentProject].features && (
-              <div className="mb-6">
+              <div>
                 <h4 className="text-sm font-medium text-white/70 mb-2">
                   Features
                 </h4>
@@ -734,12 +719,12 @@ export default function ProjectsCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
-        inline-block px-4 py-2 mt-2 
-        bg-white/5 text-white/90 text-sm 
-        rounded-md border border-white/10 
-        hover:bg-white/10 hover:text-white
-        transition-all duration-200
-      "
+            inline-block px-4 py-2 mt-2 
+            bg-white/5 text-white/90 text-sm 
+            rounded-md border border-white/10 
+            hover:bg-white/10 hover:text-white
+            transition-all duration-200
+          "
               >
                 View Project →
               </a>
