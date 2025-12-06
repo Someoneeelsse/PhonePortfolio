@@ -1501,7 +1501,6 @@ export default function Scene({
       {showError && !isMobile && (
         <Subtitles
           text="Ugh, again? The person who built this site really needs to sort out that loading issue."
-          //className="top-140 left-1/2 -translate-x-1/2 max-w-[870px]"
           className="fixed top-[54vh] left-1/2 -translate-x-1/2 max-w-[870px]"
           showNextButton={false}
           characterWidthParam={9.5}

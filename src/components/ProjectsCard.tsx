@@ -3,7 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Text, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { gsap } from "gsap";
-import { LuArrowBigLeftDash } from "react-icons/lu";
+import { LuArrowBigLeftDash, LuArrowBigRightDash } from "react-icons/lu";
 import holographicVertexShader from "/shaders/holographic/vertex.glsl?raw";
 import holographicFragmentShader from "/shaders/holographic/fragment.glsl?raw";
 import outlineVertexShader from "/shaders/holographic/outlineVertex.glsl?raw";
@@ -321,29 +321,6 @@ export default function ProjectsCard({
 
     // Check which project container the dot is closest to
     checkProjectSelection(-newAngle);
-
-    // Temporarily disable snapping to see movement
-    // const snapThreshold = 1.05; // Very small threshold - only snap when very close
-    // const projectAngle = (2 * Math.PI) / projects.length;
-
-    // for (let i = 0; i < projects.length; i++) {
-    //   const targetAngle = i * projectAngle;
-    //   const angleDiff = Math.abs(newAngle - targetAngle);
-    //   const normalizedDiff = Math.min(angleDiff, 2 * Math.PI - angleDiff);
-
-    //   console.log(
-    //     `Project ${i}: target=${targetAngle.toFixed(
-    //       2
-    //     )}, current=${newAngle.toFixed(2)}, diff=${normalizedDiff.toFixed(2)}`
-    //   );
-
-    //   if (normalizedDiff < snapThreshold) {
-    //     console.log("Snapping to project:", i);
-    //     setCurrentProject(i);
-    //     setDotAngle(targetAngle);
-    //     break;
-    //   }
-    // }
   };
 
   const handleDotPointerUp = () => {
@@ -719,14 +696,17 @@ export default function ProjectsCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
-            inline-block px-4 py-2 mt-2 
-            bg-white/5 text-white/90 text-sm 
-            rounded-md border border-white/10 
+           px-3 py-2 rounded-xl
+            bg-white/5 text-white/80 text-sm 
+             border border-white/10 
             hover:bg-white/10 hover:text-white
             transition-all duration-200
+            flex items-center gap-1 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.25)] justify-end
           "
+                style={{ cursor: "default" }}
               >
-                View Project →
+                <span className="text-sm tracking-wide">View Project</span>
+                <LuArrowBigRightDash className="text-xl" />
               </a>
             )}
           </div>
