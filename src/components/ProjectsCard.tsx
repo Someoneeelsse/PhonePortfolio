@@ -624,7 +624,7 @@ export default function ProjectsCard({
 
       {/* Reset Button - Show when ProjectsCard is visible */}
       {visible && showResetButton && onReset && (
-        <Html position={[width / 0.44, height / 1, 0]} center>
+        <Html position={[width * 2.24, height * 1.03, 0]} center>
           <button
             onClick={onReset}
             style={{
