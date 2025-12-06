@@ -382,7 +382,7 @@ const Weather = ({
           title={selectedCity || "Weather"}
         >
           <div
-            className={`h-full flex flex-col bg-gradient-to-b ${gradient} pt-30`}
+            className={`h-full flex flex-col bg-gradient-to-b ${gradient} pt-30 relative`}
           >
             {/* Header Section */}
             <div className="px-4 pt-6 pb-4">
@@ -405,7 +405,7 @@ const Weather = ({
             </div>
 
             {/* Weather Forecast */}
-            <div className="flex-1 overflow-y-auto px-4 pb-4">
+            <div className="flex-1 overflow-y-auto px-4 pb-20">
               {selectedCityWeather?.loading ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-white text-center">
@@ -463,21 +463,6 @@ const Weather = ({
                       </div>
                     </div>
                   ))}
-
-                  {/* Attribution */}
-                  <div className="mt-6 text-center">
-                    <div className="text-white/60 text-xs">
-                      Weather data by{" "}
-                      <a
-                        href="https://www.yr.no"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline font-semibold hover:text-white/80 transition-colors"
-                      >
-                        MET Norway / yr.no
-                      </a>
-                    </div>
-                  </div>
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-full">
@@ -489,98 +474,10 @@ const Weather = ({
                 </div>
               )}
             </div>
-          </div>
-        </AppsLayout>
-      );
-    }
 
-    // Main view: City cards
-    return (
-      <AppsLayout onClose={onClose} title="Weather">
-        <div className="h-full flex flex-col bg-gradient-to-b from-sky-400 via-blue-500 to-indigo-600 pt-30">
-          {/* City Cards Grid */}
-          <div className="flex-1 overflow-y-auto px-4 py-4">
-            <div className="grid grid-cols-2 gap-3">
-              {CITIES.map((city) => {
-                const cityWeather = citiesWeather.find(
-                  (c) => c.city === city.name
-                );
-                // Get today's forecast if available
-                const todayForecast =
-                  cityWeather?.forecast && cityWeather.forecast.length > 0
-                    ? cityWeather.forecast[0]
-                    : null;
-
-                // Get gradient for card based on weather
-                const getCardGradient = (condition: string) => {
-                  const lowerCondition = condition?.toLowerCase() || "";
-                  if (
-                    lowerCondition.includes("clearsky") ||
-                    lowerCondition.includes("sunny")
-                  ) {
-                    return "from-yellow-400/30 to-orange-400/30";
-                  } else if (lowerCondition.includes("rain")) {
-                    return "from-blue-500/30 to-indigo-600/30";
-                  } else if (lowerCondition.includes("snow")) {
-                    return "from-cyan-300/30 to-blue-400/30";
-                  } else if (lowerCondition.includes("cloudy")) {
-                    return "from-gray-400/30 to-gray-500/30";
-                  }
-                  return "from-white/20 to-white/10";
-                };
-
-                const cardGradient = todayForecast
-                  ? getCardGradient(todayForecast.condition)
-                  : "from-white/20 to-white/10";
-
-                return (
-                  <button
-                    key={city.name}
-                    onClick={() => setSelectedCity(city.name)}
-                    className={`bg-gradient-to-br ${cardGradient} backdrop-blur-md rounded-2xl p-4 border border-white/30 hover:border-white/50 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 text-left`}
-                  >
-                    <div className="flex flex-col items-center text-center">
-                      <div className="text-6xl mb-3 drop-shadow-lg">
-                        {todayForecast
-                          ? getWeatherIcon(todayForecast.condition)
-                          : "🌤️"}
-                      </div>
-                      <div className="text-white font-bold text-lg mb-1 drop-shadow-sm">
-                        {city.name}
-                      </div>
-                      <div className="text-white/80 text-xs mb-3 font-medium">
-                        {city.country}
-                      </div>
-                      {todayForecast ? (
-                        <>
-                          <div className="text-white text-3xl font-bold mb-2 drop-shadow-sm">
-                            {todayForecast.temp}°C
-                          </div>
-                          <div className="text-white/90 text-xs capitalize font-medium px-2 py-1 bg-white/20 rounded-full">
-                            {todayForecast.description}
-                          </div>
-                        </>
-                      ) : cityWeather?.loading ? (
-                        <div className="flex items-center justify-center gap-2 mt-2">
-                          <div className="w-5 h-5 border-2 border-white/80 border-t-transparent rounded-full animate-spin"></div>
-                          <span className="text-white/80 text-xs font-medium">
-                            Loading...
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="text-white/70 text-xs mt-2 font-medium">
-                          Tap to view
-                        </div>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Attribution */}
-            <div className="mt-6 text-center pb-4">
-              <div className="text-white/70 text-xs">
+            {/* Attribution - Fixed at bottom */}
+            <div className="absolute bottom-4 left-0 right-0 text-center px-4">
+              <div className="text-white/70 text-sm">
                 Weather data by{" "}
                 <a
                   href="https://www.yr.no"
@@ -591,6 +488,141 @@ const Weather = ({
                   MET Norway / yr.no
                 </a>
               </div>
+            </div>
+          </div>
+        </AppsLayout>
+      );
+    }
+
+    // Main view: City cards
+    return (
+      <AppsLayout onClose={onClose} title="Weather">
+        <style>
+          {`
+            @keyframes glow-sweep {
+              0% {
+                background-position: -100% -100%;
+              }
+              100% {
+                background-position: 100% 100%;
+              }
+            }
+          `}
+        </style>
+        <div className="h-full flex flex-col bg-gradient-to-b from-sky-400 via-blue-500 to-indigo-600 pt-30 relative">
+          {/* City Cards List */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 pb-20">
+            <div className="flex flex-col gap-2">
+              {CITIES.map((city) => {
+                const cityWeather = citiesWeather.find(
+                  (c) => c.city === city.name
+                );
+                // Get today's forecast if available
+                const todayForecast =
+                  cityWeather?.forecast && cityWeather.forecast.length > 0
+                    ? cityWeather.forecast[0]
+                    : null;
+
+                return (
+                  <button
+                    key={city.name}
+                    onClick={() => setSelectedCity(city.name)}
+                    className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 shadow-md hover:shadow-lg transition-all duration-200 text-left w-full relative overflow-hidden group cursor-pointer"
+                  >
+                    {/* Animated glow sweep on hover */}
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                      style={{
+                        background: `linear-gradient(
+                          135deg,
+                          transparent 0%,
+                          transparent 30%,
+                          rgba(255, 255, 255, 0.3) 50%,
+                          transparent 70%,
+                          transparent 100%
+                        )`,
+                        backgroundSize: "200% 200%",
+                        backgroundPosition: "-100% -100%",
+                        animation: "glow-sweep 1.5s ease-in-out",
+                      }}
+                    />
+                    {/* Secondary glow for depth */}
+                    <div
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-60 transition-opacity duration-500 pointer-events-none"
+                      style={{
+                        background: `radial-gradient(
+                          circle at 30% 30%,
+                          rgba(255, 255, 255, 0.4) 0%,
+                          transparent 50%
+                        )`,
+                      }}
+                    />
+                    {/* Content */}
+                    <div className="relative z-10 flex items-center justify-between">
+                      {/* Left side: City name and description */}
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        {/* Weather icon */}
+                        <div className="text-5xl flex-shrink-0">
+                          {todayForecast
+                            ? getWeatherIcon(todayForecast.condition)
+                            : cityWeather?.loading
+                            ? "⏳"
+                            : "🌤️"}
+                        </div>
+
+                        {/* City info */}
+                        <div className="flex flex-col flex-1 min-w-0">
+                          <div className="text-white font-bold text-xl mb-1 drop-shadow-sm truncate">
+                            {city.name}
+                          </div>
+                          {todayForecast ? (
+                            <div className="text-white/80 text-sm capitalize truncate">
+                              {todayForecast.description}
+                            </div>
+                          ) : cityWeather?.loading ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-4 h-4 border-2 border-white/80 border-t-transparent rounded-full animate-spin"></div>
+                              <span className="text-white/70 text-sm">
+                                Loading...
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="text-white/70 text-sm">
+                              Tap to view
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Right side: Temperature */}
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        {todayForecast && (
+                          <div className="text-white text-3xl font-bold drop-shadow-sm">
+                            {todayForecast.temp}°
+                          </div>
+                        )}
+                        {/* Arrow indicator */}
+                        <div className="text-white/60 text-xl">›</div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Attribution - Fixed at bottom */}
+          <div className="absolute bottom-4 left-0 right-0 text-center px-4">
+            <div className="text-white/70 text-sm">
+              Weather data by{" "}
+              <a
+                href="https://www.yr.no"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-semibold hover:text-white/90 transition-colors"
+              >
+                MET Norway / yr.no
+              </a>
             </div>
           </div>
         </div>
