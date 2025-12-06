@@ -1541,7 +1541,7 @@ export default function Scene({
       {showSecondSubtitles && !isMobile && (
         <Subtitles
           text="Would you mind helping me get this thing to spin up?"
-          className="top-155 left-1/2 -translate-x-1/2 max-w-[760px]"
+          className="fixed top-[60vh] left-1/2 -translate-x-1/2 max-w-[760px]"
           showNextButton={true}
           characterWidthParam={9.5}
           shouldFadeOut={shouldFadeOutSubtitles}
@@ -1564,7 +1564,7 @@ export default function Scene({
       {isHelpingTextButtonClicked && !isMobile && (
         <Subtitles
           text="Perfect"
-          className="top-170 left-1/2 -translate-x-1/2 max-w-[100px] "
+          className="fixed top-[65vh] left-1/2 -translate-x-1/2 max-w-[100px] "
           showNextButton={true}
           characterWidthParam={9.3}
           showButton={false}
