@@ -1564,7 +1564,7 @@ export default function Scene({
       {isHelpingTextButtonClicked && !isMobile && (
         <Subtitles
           text="Perfect"
-          className="fixed top-[65vh] left-1/2 -translate-x-1/2 max-w-[100px] "
+          className="fixed top-[66vh] left-1/2 -translate-x-1/2 max-w-[100px] "
           showNextButton={true}
           characterWidthParam={9.3}
           showButton={false}

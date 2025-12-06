@@ -172,16 +172,20 @@ export default function LoadingScreen({
       const moveTimer = setTimeout(() => {
         // Animate loading bar to y: 500
         gsap.to(loadingBarRef.current, {
-          y: 520,
+          //y: 520,
+          y: window.innerHeight * 0.5,
           duration: 3,
-          width: 900,
+          //width: 900,
+          width: Math.min(window.innerWidth * 0.6, 900),
+
           height: 7,
           ease: "sine.out",
         });
 
         // Animate "Someoneelsse" text to the same position + 50px (y: 550)
         gsap.to(nameTextRef.current, {
-          y: 570,
+          //y: 570,
+          y: window.innerHeight * 0.55,
           scale: 8.3, // Expand the text to 2x size
           duration: 3,
           ease: "sine.out",
