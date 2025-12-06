@@ -1704,7 +1704,7 @@ export default function Scene({
           className="absolute z-[10000] flex flex-col items-start gap-3 animate-fadeInCorrect"
           style={{
             left: `${phoneScreenPos.x + 250}px`,
-            top: `${phoneScreenPos.y - 185}px`,
+            top: `31.3%`,
             transform: "translateY(-50%)",
           }}
         >
