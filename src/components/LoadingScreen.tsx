@@ -478,12 +478,12 @@ export default function LoadingScreen({
               </a>
               <a
                 ref={linkedinLinkRef}
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/jakub-grzybowski-99a21a3a0/"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => {
                   window.open(
-                    "https://linkedin.com",
+                    "https://www.linkedin.com/in/jakub-grzybowski-99a21a3a0/",
                     "_blank",
                     "noopener,noreferrer"
                   );

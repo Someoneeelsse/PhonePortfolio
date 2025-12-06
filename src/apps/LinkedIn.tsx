@@ -42,7 +42,12 @@ const LinkedIn = ({
 
   if (showContent) {
     return (
-      <AppsLayout onClose={onClose} title="LinkedIn" statusBarTextColor="text-black" batteryColorScheme="light">
+      <AppsLayout
+        onClose={onClose}
+        title="LinkedIn"
+        statusBarTextColor="text-black"
+        batteryColorScheme="light"
+      >
         <div className="h-full flex flex-col bg-white pt-30">
           {/* LinkedIn content - opens in new window due to X-Frame-Options */}
           <div className="flex-1 w-full h-full flex flex-col items-center justify-center px-6">
@@ -57,7 +62,7 @@ const LinkedIn = ({
               <button
                 onClick={() => {
                   window.open(
-                    "https://linkedin.com",
+                    "https://www.linkedin.com/in/jakub-grzybowski-99a21a3a0/",
                     "_blank",
                     "noopener,noreferrer"
                   );
