@@ -3,6 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Text, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { gsap } from "gsap";
+import { LuArrowBigLeftDash } from "react-icons/lu";
 import holographicVertexShader from "/shaders/holographic/vertex.glsl?raw";
 import holographicFragmentShader from "/shaders/holographic/fragment.glsl?raw";
 import outlineVertexShader from "/shaders/holographic/outlineVertex.glsl?raw";
@@ -18,6 +19,8 @@ interface ProjectsCardProps {
   height?: number;
   depth?: number;
   visible?: boolean;
+  showResetButton?: boolean;
+  onReset?: () => void;
 }
 
 const projects = [
@@ -102,6 +105,8 @@ export default function ProjectsCard({
   height = 3,
   depth = 0.1,
   visible = true,
+  showResetButton = false,
+  onReset,
 }: ProjectsCardProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const imageRef = useRef<THREE.Mesh>(null);
@@ -616,6 +621,34 @@ export default function ProjectsCard({
         <sphereGeometry args={[0.06, 16, 16]} />
         <meshBasicMaterial color="#22d3ee" transparent opacity={0.9} />
       </mesh>
+
+      {/* Reset Button - Show when ProjectsCard is visible */}
+      {visible && showResetButton && onReset && (
+        <Html position={[width / 0.44, height / 1, 0]} center>
+          <button
+            onClick={onReset}
+            style={{
+              cursor: "default",
+            }}
+            className="
+          px-3 py-2
+          rounded-xl
+          bg-white/5 
+          backdrop-blur-xl
+          border border-white/10
+          text-white/80
+          shadow-[0_4px_20px_rgba(0,0,0,0.25)]
+          hover:bg-white/10 hover:text-white
+          transition-all duration-200
+          flex items-center gap-1
+          z-[10001]
+        "
+          >
+            <LuArrowBigLeftDash className="text-xl" />
+            <span className="text-sm tracking-wide">Back</span>
+          </button>
+        </Html>
+      )}
 
       {/* Information Box - only show when visible */}
       {visible && (

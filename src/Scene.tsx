@@ -1456,69 +1456,46 @@ export default function Scene({
             depth={0.2}
             scale={[0.5, 0.5, 0.5]}
             visible={showProjectsCard}
+            showResetButton={showResetButton}
+            onReset={() => {
+              // Set resetting flag to keep button visible during animation
+              setIsResetting(true);
+              // Reset phone movement state to prevent animation retrigger
+              // This prevents onMoveToProjectsComplete from firing and showing ProjectsCard again
+              setShouldMovePhoneToProjects(false);
+              // Ensure ProjectsCard stays visible during background animation
+              // (it should already be visible, but we ensure it stays that way)
+              // Step 1: Start gradual background reset animation first
+              // After background completes, hide ProjectCard, then move phone
+              handleBackgroundReset(() => {
+                // Step 2: Hide ProjectsCard after background animation completes
+                setShowProjectsCard(false);
+                setShowResetButton(false);
+                // Step 3: Wait a bit then move phone back
+                setTimeout(() => {
+                  setShouldResetToInitial(true);
+                }, 200);
+              });
+              setTimeout(() => {
+                dispatchPhoneScreenVisibility(true);
+              }, 5370);
+              setTimeout(() => {
+                // Play iPhone charging sound
+                const chargingSound = new Audio(
+                  "/audio/IphoneChargingSound.mp3"
+                );
+                chargingSound.volume = 0.5; // Set volume to 50%
+                chargingSound.play().catch((error) => {
+                  console.error("Error playing charging sound:", error);
+                });
+              }, 6000);
+              setTimeout(() => {
+                animateChargerTo(-5.2); // Move charger back to initial position
+              }, 7000);
+            }}
           />
         )}
       </Canvas>
-
-      {/* Reset Button - Show when ProjectsCard is visible */}
-      {showResetButton && (
-        <button
-          onClick={() => {
-            // Set resetting flag to keep button visible during animation
-            setIsResetting(true);
-            // Reset phone movement state to prevent animation retrigger
-            // This prevents onMoveToProjectsComplete from firing and showing ProjectsCard again
-            setShouldMovePhoneToProjects(false);
-            // Ensure ProjectsCard stays visible during background animation
-            // (it should already be visible, but we ensure it stays that way)
-            // Step 1: Start gradual background reset animation first
-            // After background completes, hide ProjectCard, then move phone
-            handleBackgroundReset(() => {
-              // Step 2: Hide ProjectsCard after background animation completes
-              setShowProjectsCard(false);
-              setShowResetButton(false);
-              // Step 3: Wait a bit then move phone back
-              setTimeout(() => {
-                setShouldResetToInitial(true);
-              }, 200);
-            });
-            setTimeout(() => {
-              dispatchPhoneScreenVisibility(true);
-            }, 5370);
-            setTimeout(() => {
-              // Play iPhone charging sound
-              const chargingSound = new Audio("/audio/IphoneChargingSound.mp3");
-              chargingSound.volume = 0.5; // Set volume to 50%
-              chargingSound.play().catch((error) => {
-                console.error("Error playing charging sound:", error);
-              });
-            }, 6000);
-            setTimeout(() => {
-              animateChargerTo(-5.2); // Move charger back to initial position
-            }, 7000);
-          }}
-          style={{
-            cursor: "default",
-          }}
-          className="
-          fixed top-[160px] right-[547px] z-[10001]
-          px-3 py-2
-          rounded-xl
-          bg-white/5 
-          backdrop-blur-xl
-          border border-white/10
-          text-white/80
-          shadow-[0_4px_20px_rgba(0,0,0,0.25)]
-          hover:bg-white/10 hover:text-white
-          transition-all duration-200
-          flex items-center gap-1
-          
-        "
-        >
-          <LuArrowBigLeftDash className="text-xl" />
-          <span className="text-sm tracking-wide">Back</span>
-        </button>
-      )}
 
       {/* Fixed "Nice" subtitle that doesn't rotate */}
       {showError && !isMobile && (
