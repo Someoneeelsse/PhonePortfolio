@@ -624,13 +624,22 @@ export default function ProjectsCard({
 
       {/* Reset Button - Show when ProjectsCard is visible */}
       {visible && showResetButton && onReset && (
-        <Html position={[width * 2.24, height * 1.03, 0]} center>
-          <button
-            onClick={onReset}
+        <Html position={[width, height, 0]} center>
+          <div
             style={{
-              cursor: "default",
+              position: "fixed",
+              top: "50%", // 20% from top of viewport
+              left: "85%", // center horizontally
+              transform: "translateX(140%) translateY(50%)",
+              zIndex: 10001,
             }}
-            className="
+          >
+            <button
+              onClick={onReset}
+              style={{
+                cursor: "default",
+              }}
+              className="
           px-3 py-2
           rounded-xl
           bg-white/5 
@@ -643,10 +652,11 @@ export default function ProjectsCard({
           flex items-center gap-1
           z-[10001]
         "
-          >
-            <LuArrowBigLeftDash className="text-xl" />
-            <span className="text-sm tracking-wide">Back</span>
-          </button>
+            >
+              <LuArrowBigLeftDash className="text-xl" />
+              <span className="text-sm tracking-wide">Back</span>
+            </button>
+          </div>
         </Html>
       )}
 
