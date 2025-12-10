@@ -164,7 +164,7 @@ const Job = ({
     },
     {
       id: 2,
-      title: "Nordomatic AD",
+      title: "Nordomatic AS",
       year: "2023 - 2025",
       position: "Software Developer / System Engineer",
       responsibilities: [
