@@ -151,7 +151,7 @@ const Job = ({
         "Developing and maintaining full-stack web applications",
         "Containerizing and deploying applications using Docker and CI/CD",
         "Managing client hosting, servers, and automated testing",
-        "Creating chatbots, recentely developing MCP servers",
+        "Creating chatbots, recently developing MCP servers",
       ],
       learned: [
         "React",
